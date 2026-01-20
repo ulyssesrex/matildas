@@ -5,6 +5,12 @@ navLinks.forEach((link) => {
     const href = link.getAttribute('href');
     if (!href || !href.startsWith('#')) return;
 
+    if (href === '#home') {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     const target = document.querySelector(href);
     if (!target) return;
 
