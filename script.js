@@ -108,13 +108,66 @@ function normalizeShowEntry(entry) {
     address: entry.address || '',
     price: entry.price || '',
     notes: entry.notes || '',
-    links: entry.links || {},
+    links: normalizeLinks(entry.links),
   };
 }
 
-function renderRichText(text) {
+function normalizeLinks(links) {
+  if (!links || typeof links !== 'object') return {};
+
+  return Object.entries(links).reduce((acc, [key, value]) => {
+    if (!value) return acc;
+
+    if (typeof value === 'string') {
+      acc[key] = { url: value, text: value };
+      return acc;
+    }
+
+    if (typeof value === 'object') {
+      const url = value.url || value.href || '';
+      if (!url) return acc;
+      const text = value.text || value.label || url;
+      acc[key] = { url, text };
+    }
+
+    return acc;
+  }, {});
+}
+
+function renderRichText(text, links = {}) {
   if (!text) return '';
-  return String(text).replace(/\{([^{}]+)\}/g, (_, key) => `{{${key}}}`);
+  return String(text).replace(/\{([^{}]+)\}/g, (match, key) => {
+    if (!key.startsWith('links.')) return `{{${key}}}`;
+
+    const linkKey = key.slice('links.'.length);
+    const link = links[linkKey];
+
+    if (!link || !link.url) return `{{${key}}}`;
+
+    const safeUrl = escapeHtml(link.url);
+    const safeText = escapeHtml(link.text || link.url);
+
+    return `<a href="${safeUrl}" target="_blank" rel="noreferrer noopener">${safeText}</a>`;
+  });
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => {
+    switch (char) {
+      case '&':
+        return '&amp;';
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '"':
+        return '&quot;';
+      case "'":
+        return '&#39;';
+      default:
+        return char;
+    }
+  });
 }
 
 function populateShowsTable(table, shows) {
@@ -127,7 +180,7 @@ function populateShowsTable(table, shows) {
     const row = document.createElement('tr');
     ['date', 'time', 'venue', 'address', 'price', 'notes'].forEach((key) => {
       const cell = document.createElement('td');
-      cell.innerHTML = renderRichText(show[key]);
+      cell.innerHTML = renderRichText(show[key], show.links);
       row.appendChild(cell);
     });
     tbody.appendChild(row);
