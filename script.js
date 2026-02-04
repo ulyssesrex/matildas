@@ -98,6 +98,12 @@ if (showsTable) {
     });
 }
 
+const mediaGrid = document.querySelector('[data-media-grid]');
+
+if (mediaGrid) {
+  populateMediaGrid(mediaGrid);
+}
+
 function normalizeShowEntry(entry) {
   if (!entry || !entry.date) return null;
 
@@ -194,4 +200,140 @@ function renderNoShowsMessage(sectionBody) {
   const message = document.createElement('p');
   message.textContent = 'No upcoming shows -- stay tuned!';
   sectionBody.appendChild(message);
+}
+
+function populateMediaGrid(grid) {
+  setMediaPlaceholder(grid, 'Loading media...');
+
+  discoverMediaFiles()
+    .then((mediaFiles) => {
+      if (!mediaFiles.length) {
+        setMediaPlaceholder(grid, 'Media coming soon.');
+        return;
+      }
+
+      grid.innerHTML = '';
+
+      mediaFiles.forEach((src) => {
+        const mediaItem = document.createElement('div');
+        mediaItem.className = 'media-item';
+
+        const image = document.createElement('img');
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.src = src;
+        image.alt = buildAltFromFileName(src);
+
+        mediaItem.appendChild(image);
+        grid.appendChild(mediaItem);
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+      setMediaPlaceholder(grid, 'Media temporarily unavailable.');
+    });
+}
+
+function setMediaPlaceholder(grid, text) {
+  grid.innerHTML = '';
+  const placeholder = document.createElement('p');
+  placeholder.className = 'media-placeholder';
+  placeholder.textContent = text;
+  grid.appendChild(placeholder);
+}
+
+async function discoverMediaFiles() {
+  const manifestPaths = ['media/manifest.json', 'media/index.json', 'media/media.json'];
+  const imageExtensions = /\.(avif|gif|jpe?g|png|webp|svg)$/i;
+
+  for (const manifestPath of manifestPaths) {
+    const manifest = await fetchOptionalJson(manifestPath);
+    const manifestEntries = normalizeMediaManifest(manifest);
+    const manifestImages = manifestEntries
+      .map(toMediaPath)
+      .filter((entry) => entry && imageExtensions.test(entry));
+
+    if (manifestImages.length) {
+      return dedupe(manifestImages);
+    }
+  }
+
+  const directoryListing = await fetchOptionalText('media/');
+  if (directoryListing) {
+    const listingImages = extractImageHrefs(directoryListing, imageExtensions)
+      .map(toMediaPath)
+      .filter(Boolean);
+
+    if (listingImages.length) {
+      return dedupe(listingImages);
+    }
+  }
+
+  return [];
+}
+
+function normalizeMediaManifest(manifest) {
+  if (!manifest) return [];
+  if (Array.isArray(manifest)) return manifest;
+
+  const possibleLists = [manifest.files, manifest.images, manifest.media];
+
+  return possibleLists.find(Array.isArray) || [];
+}
+
+async function fetchOptionalJson(path) {
+  try {
+    const response = await fetch(path);
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (error) {
+    return null;
+  }
+}
+
+async function fetchOptionalText(path) {
+  try {
+    const response = await fetch(path);
+    if (!response.ok) return null;
+    return await response.text();
+  } catch (error) {
+    return null;
+  }
+}
+
+function extractImageHrefs(html, pattern) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+
+  return Array.from(doc.querySelectorAll('a[href]'))
+    .map((link) => link.getAttribute('href') || '')
+    .filter((href) => pattern.test(href));
+}
+
+function toMediaPath(href) {
+  if (!href) return null;
+
+  if (/^https?:\/\//i.test(href)) {
+    return href;
+  }
+
+  const cleaned = href
+    .replace(/^[./]+/, '')
+    .replace(/^media\//i, '');
+
+  return `media/${cleaned}`;
+}
+
+function dedupe(list) {
+  return Array.from(new Set(list));
+}
+
+function buildAltFromFileName(path) {
+  if (!path) return '';
+
+  const fileName = path.split('/').pop() || '';
+  const withoutExtension = fileName.replace(/\.[^.]+$/, '');
+  const readable = withoutExtension.replace(/[-_]+/g, ' ').trim();
+
+  return readable || 'Media image';
 }
