@@ -18,3 +18,27 @@ navLinks.forEach((link) => {
     target.scrollIntoView({ behavior: 'smooth' });
   });
 });
+
+const iframeIncludes = document.querySelectorAll('[data-iframe-include]');
+
+iframeIncludes.forEach((placeholder) => {
+  const path = placeholder.getAttribute('data-iframe-include');
+  if (!path) return;
+
+  fetch(path)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Failed to load iframe include: ${path}`);
+      }
+      return response.text();
+    })
+    .then((html) => {
+      const template = document.createElement('template');
+      template.innerHTML = html.trim();
+      placeholder.replaceWith(template.content);
+    })
+    .catch((error) => {
+      console.error(error);
+      placeholder.remove();
+    });
+});
