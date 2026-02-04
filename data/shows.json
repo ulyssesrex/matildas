@@ -79,11 +79,15 @@
     "venue": "{links.venue}",
     "address": "Raleigh, NC",
     "price": "Donations Only",
-    "notes": "w/ Kid Alumni",
+    "notes": "w/ {links.kid_alumni}",
     "links": {
       "venue": {
         "url": "https://maps.app.goo.gl/izvpYmaA5X4Vujru8",
         "text": "Berkeley Cafe"
+      },
+      "kid_alumni": {
+        "url": "https://www.instagram.com/kid.alumni.band/",
+        "text": "Kid Alumni"
       }
     }
   },
