@@ -1,0 +1,58 @@
+[
+  {
+    "date": "2025-04-11",
+    "time": "8:00pm",
+    "venue": "Nash Street Tavern",
+    "address": "250 S Nash St, Hillsborough, NC 27278",
+    "price": "Donations Only",
+    "notes": ""
+  },
+  {
+    "date": "2025-07-27",
+    "time": "8:30pm",
+    "venue": "Local 506",
+    "address": "506 W Franklin St, Chapel Hill, NC 27516",
+    "price": "$10",
+    "notes": "w/ FM Snow & Booster Club"
+  },
+  {
+    "date": "2025-08-29",
+    "time": "8:00pm",
+    "venue": "Nash Street Tavern",
+    "address": "250 S Nash St, Hillsborough, NC 27278",
+    "price": "Donations Only",
+    "notes": ""
+  },
+  {
+    "date": "2026-01-17",
+    "time": "6:00pm",
+    "venue": "Huron Stage",
+    "address": "2329 Huron St, Durham, NC 27707",
+    "price": "Donations Only",
+    "notes": "w/ Oort Patrol & XOXOK"
+  },
+  {
+    "date": "2026-02-26",
+    "time": "8:00pm",
+    "venue": "OX4D Music",
+    "address": "125 Main St, Oxford, NC 27565",
+    "price": "Free",
+    "notes": "Livestream link: https://nextdoorradio.com/"
+  },
+  {
+    "date": "2026-04-10",
+    "time": "8:30pm",
+    "venue": "Berkeley Cafe",
+    "address": "428 S Dawson St, Raleigh, NC 27601",
+    "price": "Donations Only",
+    "notes": "w/ Kid Alumni"
+  },
+  {
+    "date": "2026-05-01",
+    "time": "8:00pm",
+    "venue": "Nash Street Tavern",
+    "address": "250 S Nash St, Hillsborough, NC 27278",
+    "price": "Donations Only",
+    "notes": ""
+  }
+]

@@ -48,30 +48,24 @@ const showsTable = document.querySelector('table[aria-label="Shows"]');
 if (showsTable) {
   const showsSectionBody = showsTable.closest('.section-body');
 
-  fetch('show-list.csv')
+  fetch('data/shows.json')
     .then((response) => {
       if (!response.ok) {
         throw new Error('Failed to load show list');
       }
-      return response.text();
-    })
-    .then((csvText) => {
-      const rows = parseCsv(csvText);
-      if (!rows.length) return [];
-
-      const [headerRow, ...dataRows] = rows;
-      const headers = headerRow.map((header) => header.trim());
-
-      return dataRows.map((row) => {
-        const entry = {};
-        headers.forEach((header, index) => {
-          entry[header] = (row[index] || '').trim();
-        });
-        return entry;
-      });
+      return response.json();
     })
     .then((entries) => {
-      if (!entries || !entries.length) {
+      if (!Array.isArray(entries) || !entries.length) {
+        renderNoShowsMessage(showsSectionBody);
+        return;
+      }
+
+      const normalizedEntries = entries
+        .map(normalizeShowEntry)
+        .filter(Boolean);
+
+      if (!normalizedEntries.length) {
         renderNoShowsMessage(showsSectionBody);
         return;
       }
@@ -81,8 +75,8 @@ if (showsTable) {
       const weekAgo = new Date(todayStart);
       weekAgo.setDate(weekAgo.getDate() - 7);
 
-      const recentAndUpcomingShows = entries.filter((entry) => {
-        const dateStr = entry.Date;
+      const recentAndUpcomingShows = normalizedEntries.filter((entry) => {
+        const dateStr = entry.date;
         if (!dateStr) return false;
 
         const parsedDate = new Date(`${dateStr}T00:00:00`);
@@ -104,67 +98,36 @@ if (showsTable) {
     });
 }
 
-function parseCsv(text) {
-  const rows = [];
-  let currentValue = '';
-  let row = [];
-  let inQuotes = false;
+function normalizeShowEntry(entry) {
+  if (!entry || !entry.date) return null;
 
-  for (let i = 0; i < text.length; i += 1) {
-    const char = text[i];
-    const next = text[i + 1];
+  return {
+    date: entry.date,
+    time: entry.time || '',
+    venue: entry.venue || '',
+    address: entry.address || '',
+    price: entry.price || '',
+    notes: entry.notes || '',
+    links: entry.links || {},
+  };
+}
 
-    if (char === '"') {
-      if (inQuotes && next === '"') {
-        currentValue += '"';
-        i += 1;
-      } else {
-        inQuotes = !inQuotes;
-      }
-      continue;
-    }
-
-    if (char === ',' && !inQuotes) {
-      row.push(currentValue);
-      currentValue = '';
-      continue;
-    }
-
-    if ((char === '\n' || char === '\r') && !inQuotes) {
-      row.push(currentValue);
-      if (row.some((value) => value.trim() !== '')) {
-        rows.push(row);
-      }
-      row = [];
-      currentValue = '';
-      if (char === '\r' && next === '\n') {
-        i += 1;
-      }
-      continue;
-    }
-
-    currentValue += char;
-  }
-
-  if (currentValue || row.length) {
-    row.push(currentValue);
-    if (row.some((value) => value.trim() !== '')) {
-      rows.push(row);
-    }
-  }
-
-  return rows;
+function renderRichText(text) {
+  if (!text) return '';
+  return String(text).replace(/\{([^{}]+)\}/g, (_, key) => `{{${key}}}`);
 }
 
 function populateShowsTable(table, shows) {
   const tbody = table.querySelector('tbody');
   if (!tbody) return;
 
+  tbody.innerHTML = '';
+
   shows.forEach((show) => {
     const row = document.createElement('tr');
-    ['Date', 'Time', 'Venue', 'Address', 'Price', 'Notes'].forEach((key) => {
+    ['date', 'time', 'venue', 'address', 'price', 'notes'].forEach((key) => {
       const cell = document.createElement('td');
-      cell.textContent = show[key] || '';
+      cell.innerHTML = renderRichText(show[key]);
       row.appendChild(cell);
     });
     tbody.appendChild(row);
