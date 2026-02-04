@@ -113,6 +113,13 @@ body {
   font-size: 14px;
 }
 
+.inline-icon {
+  height: 1em;
+  width: auto;
+  vertical-align: text-bottom;
+  margin-right: 8px;
+}
+
 .bandcamp-embed {
   display: block;
   width: 100%;
