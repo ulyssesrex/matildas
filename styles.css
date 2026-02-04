@@ -110,6 +110,19 @@ body {
   border-collapse: collapse;
 }
 
+.invisible-table th,
+.invisible-table td {
+  padding: 8px 18px;
+  text-align: left;
+}
+
+.invisible-table th:nth-child(1),
+.invisible-table th:nth-child(2),
+.invisible-table td:nth-child(1),
+.invisible-table td:nth-child(2) {
+  white-space: nowrap;
+}
+
 .footer {
   border-top: 6px solid var(--fg);
   height: 120px;
