@@ -105,7 +105,7 @@ function normalizeShowEntry(entry) {
     date: entry.date,
     time: entry.time || '',
     venue: entry.venue || '',
-    address: entry.address || '',
+    location: entry.location || '',
     price: entry.price || '',
     notes: entry.notes || '',
     links: normalizeLinks(entry.links),
@@ -178,7 +178,7 @@ function populateShowsTable(table, shows) {
 
   shows.forEach((show) => {
     const row = document.createElement('tr');
-    ['date', 'time', 'venue', 'address', 'price', 'notes'].forEach((key) => {
+    ['date', 'time', 'venue', 'location', 'price', 'notes'].forEach((key) => {
       const cell = document.createElement('td');
       cell.innerHTML = renderRichText(show[key], show.links);
       row.appendChild(cell);
