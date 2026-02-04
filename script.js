@@ -217,12 +217,16 @@ function populateMediaGrid(grid) {
       mediaFiles.forEach((src) => {
         const mediaItem = document.createElement('div');
         mediaItem.className = 'media-item';
+        mediaItem.style.gridColumn = 'span 1';
 
         const image = document.createElement('img');
         image.loading = 'lazy';
         image.decoding = 'async';
         image.src = src;
         image.alt = buildAltFromFileName(src);
+        image.addEventListener('load', () => {
+          setMediaSpanFromAspect(mediaItem, image);
+        });
 
         mediaItem.appendChild(image);
         grid.appendChild(mediaItem);
@@ -336,4 +340,21 @@ function buildAltFromFileName(path) {
   const readable = withoutExtension.replace(/[-_]+/g, ' ').trim();
 
   return readable || 'Media image';
+}
+
+function setMediaSpanFromAspect(item, image) {
+  const width = image.naturalWidth;
+  const height = image.naturalHeight;
+  if (!width || !height) return;
+
+  const ratio = width / height;
+  let span = 1;
+
+  if (ratio >= 2.3) {
+    span = 3;
+  } else if (ratio >= 1.5) {
+    span = 2;
+  }
+
+  item.style.gridColumn = `span ${span}`;
 }
