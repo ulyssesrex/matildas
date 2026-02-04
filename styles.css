@@ -123,8 +123,8 @@ body {
   white-space: nowrap;
 }
 
-.invisible-table th:nth-child(4),
-.invisible-table td:nth-child(4) {
+.invisible-table th:nth-child(6),
+.invisible-table td:nth-child(6) {
   min-width: 200px;
   word-break: break-word;
 }
