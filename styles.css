@@ -167,6 +167,26 @@ main,
   word-break: break-word;
 }
 
+#shows .section-body {
+  overflow-x: auto;
+}
+
+#shows .invisible-table {
+  min-width: 720px;
+}
+
+#shows .invisible-table th:nth-child(1),
+#shows .invisible-table td:nth-child(1),
+#shows .invisible-table th:nth-child(2),
+#shows .invisible-table td:nth-child(2) {
+  min-width: 10%;
+}
+
+#shows .invisible-table th:nth-child(6),
+#shows .invisible-table td:nth-child(6) {
+  min-width: 20%;
+}
+
 .footer {
   border-top: 6px solid var(--fg);
   min-height: 120px;
