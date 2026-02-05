@@ -1,6 +1,7 @@
 :root {
   --bg: #ffffff;
   --fg: #000000;
+  --page-padding: clamp(16px, 5vw, 48px);
 }
 
 * {
@@ -12,6 +13,14 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+body,
+main,
+.nav-bar,
+.footer,
+.section {
+  width: 100%;
 }
 
 .nav-bar {
@@ -26,7 +35,7 @@ body {
 .nav {
   display: flex;
   gap: 28px;
-  padding: 18px 32px;
+  padding: 18px var(--page-padding);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-weight: 700;
@@ -47,13 +56,13 @@ body {
 }
 
 .layout {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 96px 48px 128px;
+  width: 100%;
+  margin: 0;
+  padding: 96px 0 128px;
 }
 
 .hero {
-  padding-bottom: 80px;
+  padding: 0 var(--page-padding) 80px;
 }
 
 .hero-title {
@@ -66,7 +75,7 @@ body {
 }
 
 .section {
-  padding: 72px 0;
+  padding: 72px var(--page-padding);
   border-top: 2px solid var(--fg);
 }
 
@@ -80,6 +89,7 @@ body {
 
 .section-body {
   min-height: 80px;
+  overflow-x: auto;
 }
 
 .media-grid {
@@ -146,24 +156,14 @@ body {
 
 .invisible-table {
   border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
 }
 
 .invisible-table th,
 .invisible-table td {
   padding: 8px 18px;
   text-align: left;
-}
-
-.invisible-table th:nth-child(1),
-.invisible-table th:nth-child(2),
-.invisible-table td:nth-child(1),
-.invisible-table td:nth-child(2) {
-  white-space: nowrap;
-}
-
-.invisible-table th:nth-child(6),
-.invisible-table td:nth-child(6) {
-  min-width: 200px;
   word-break: break-word;
 }
 
@@ -185,10 +185,14 @@ body {
 }
 
 @media (max-width: 768px) {
+  :root {
+    --page-padding: clamp(12px, 6vw, 24px);
+  }
+
   .nav {
     flex-wrap: wrap;
     gap: 12px 16px;
-    padding: 12px 20px;
+    padding: 12px var(--page-padding);
   }
 
   .nav-link {
@@ -197,11 +201,11 @@ body {
   }
 
   .layout {
-    padding: 72px 24px 96px;
+    padding: 72px 0 96px;
   }
 
   .hero {
-    padding-bottom: 56px;
+    padding: 0 var(--page-padding) 56px;
   }
 
   .hero-title {
@@ -210,7 +214,7 @@ body {
   }
 
   .section {
-    padding: 56px 0;
+    padding: 56px var(--page-padding);
   }
 
   .section-title {
