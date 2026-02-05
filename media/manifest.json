@@ -1,0 +1,4 @@
+{
+  "_comment": "Add filenames relative to media/ (subfolders allowed). Example: \"0001.jpg\" or \"tour-photos/brisbane.webp\".",
+  "files": []
+}
