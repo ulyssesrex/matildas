@@ -169,8 +169,19 @@ body {
 
 .footer {
   border-top: 6px solid var(--fg);
-  height: 120px;
+  min-height: 120px;
   background: var(--bg);
+  display: grid;
+  place-items: center;
+  padding: 10px 0;
+}
+
+.footer-logo {
+  max-height: 80px;
+  max-width: 60vw;
+  width: auto;
+  height: auto;
+  display: block;
 }
 
 @media (max-width: 768px) {
