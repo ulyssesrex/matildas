@@ -60,7 +60,7 @@
     "time": "8:00pm",
     "venue": "{links.venue}",
     "location": "Oxford, NC",
-    "price": "Free",
+    "price": "Donations Only",
     "notes": "{links.livestream}",
     "links": {
       "venue": {
@@ -70,6 +70,20 @@
       "livestream": {
         "url": "https://nextdoorradio.com/",
         "text": "Livestream it here"
+      }
+    }
+  },
+  {
+    "date": "2026-03-11",
+    "time": "9:00pm",
+    "venue": "{links.venue}",
+    "location": "Raleigh, NC",
+    "price": "$5",
+    "notes": "21+",
+    "links": {
+      "venue": {
+        "url": "https://maps.app.goo.gl/hpoEXMfcd1d7owzT8",
+        "text": "Slim's Dive Bar"
       }
     }
   },
