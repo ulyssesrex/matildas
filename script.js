@@ -247,7 +247,7 @@ function setMediaPlaceholder(grid, text) {
 }
 
 async function discoverMediaFiles() {
-  const manifestPaths = ['media/manifest.json', 'media/index.json', 'media/media.json'];
+  const manifestPaths = ['media/manifest.json'];
   const imageExtensions = /\.(avif|gif|jpe?g|png|webp|svg)$/i;
 
   for (const manifestPath of manifestPaths) {
