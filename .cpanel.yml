@@ -1,0 +1,11 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/matildas/public_html/
+    - /bin/cp -R data $DEPLOYPATH
+    - /bin/cp -R embeds $DEPLOYPATH
+    - /bin/cp -R media $DEPLOYPATH
+    - /bin/cp LICENSE $DEPLOYPATH
+    - /bin/cp script.js $DEPLOYPATH
+    - /bin/cp styles.css $DEPLOYPATH
+    - /bin/cp index.html $DEPLOYPATH
