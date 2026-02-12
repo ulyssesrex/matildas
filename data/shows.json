@@ -79,11 +79,15 @@
     "venue": "{links.venue}",
     "location": "Raleigh, NC",
     "price": "$5",
-    "notes": "21+",
+    "notes": "21+, w/ {links.lazaris_pit} & TBD",
     "links": {
       "venue": {
         "url": "https://maps.app.goo.gl/hpoEXMfcd1d7owzT8",
         "text": "Slim's Dive Bar"
+      },
+      "lazaris_pit": {
+        "url": "https://www.instagram.com/themlpbois/",
+        "text": "Lazaris Pit"
       }
     }
   },
