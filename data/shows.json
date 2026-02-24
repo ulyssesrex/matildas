@@ -79,7 +79,7 @@
     "venue": "{links.venue}",
     "location": "Raleigh, NC",
     "price": "$5",
-    "notes": "21+, w/ {links.lazaris_pit} & TBD",
+    "notes": "21+, w/ {links.lazaris_pit} & {links.run_hill}",
     "links": {
       "venue": {
         "url": "https://maps.app.goo.gl/hpoEXMfcd1d7owzT8",
@@ -88,6 +88,10 @@
       "lazaris_pit": {
         "url": "https://www.instagram.com/themlpbois/",
         "text": "Lazaris Pit"
+      },
+      "run_hill": {
+        "url": "https://www.instagram.com/runhill252/",
+        "text": "Run Hill"
       }
     }
   },
