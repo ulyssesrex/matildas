@@ -114,6 +114,28 @@
     }
   },
   {
+    "date": "2026-04-26",
+    "time": "TBD",
+    "venue": "{links.venue}",
+    "location": "Durham, NC",
+    "price": "TBD",
+    "notes": "w/ {links.accidental_caps} & {links.cult_vacant}",
+    "links": {
+      "venue": {
+        "url": "https://maps.app.goo.gl/jY3RQbHm9yYYijtw9",
+        "text": "Stanczyks"
+      },
+      "accidental_caps": {
+        "url": "https://www.instagram.com/accidentalcapsmusic/",
+        "text": "Accidental Caps"
+      },
+      "cult_vacant": {
+        "url": "https://www.instagram.com/cultvacant/",
+        "text": "Cult Vacant"
+      }
+    }
+  },
+  {
     "date": "2026-05-01",
     "time": "8:00pm",
     "venue": "{links.venue}",
@@ -124,6 +146,20 @@
       "venue": {
         "url": "https://maps.app.goo.gl/u1xZJXFDLpugXfci8",
         "text": "Nash Street Tavern"
+      }
+    }
+  },
+  {
+    "date": "2026-06-17",
+    "time": "7:00pm",
+    "venue": "{links.venue}",
+    "location": "Oxford, NC",
+    "price": "Donations Only",
+    "notes": "\"Quittin' Time\" downtown music series",
+    "links": {
+      "venue": {
+        "url": "https://maps.app.goo.gl/ppdkGiNPyujGQKr59",
+        "text": "Humble Pour"
       }
     }
   }
