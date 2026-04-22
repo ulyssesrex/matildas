@@ -115,15 +115,19 @@
   },
   {
     "date": "2026-04-26",
-    "time": "TBD",
+    "time": "7:00pm",
     "venue": "{links.venue}",
     "location": "Durham, NC",
-    "price": "TBD",
+    "price": "{links.price}",
     "notes": "w/ {links.accidental_caps} & {links.cult_vacant}",
     "links": {
       "venue": {
         "url": "https://maps.app.goo.gl/jY3RQbHm9yYYijtw9",
         "text": "Stanczyks"
+      },
+      "price": {
+        "url": "https://www.stanczyksdurham.com/#/events/172231",
+        "text": "$10 presale / $15 door"
       },
       "accidental_caps": {
         "url": "https://www.instagram.com/accidentalcapsmusic/",
