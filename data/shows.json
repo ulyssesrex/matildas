@@ -166,5 +166,23 @@
         "text": "Humble Pour"
       }
     }
+  },
+  {
+    "date": "2026-08-08",
+    "time": "8:30pm",
+    "venue": "{links.venue}",
+    "location": "Raleigh, NC",
+    "price": "Donations Only",
+    "notes": "w/ {links.thick_modine}",
+    "links": {
+      "venue": {
+        "url": "https://maps.app.goo.gl/izvpYmaA5X4Vujru8",
+        "text": "Berkeley Cafe"
+      },
+      "thick_modine": {
+        "url": "https://www.instagram.com/thickmodine/", 
+        "text": "Thick Modine"
+      }
+    }
   }
 ]
