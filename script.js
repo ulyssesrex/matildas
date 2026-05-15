@@ -276,17 +276,6 @@ async function discoverMediaFiles() {
     }
   }
 
-  const directoryListing = await fetchOptionalText('media/');
-  if (directoryListing) {
-    const listingImages = extractImageHrefs(directoryListing, imageExtensions)
-      .map(toMediaPath)
-      .filter(Boolean);
-
-    if (listingImages.length) {
-      return dedupe(listingImages);
-    }
-  }
-
   return [];
 }
 
@@ -307,25 +296,6 @@ async function fetchOptionalJson(path) {
   } catch (error) {
     return null;
   }
-}
-
-async function fetchOptionalText(path) {
-  try {
-    const response = await fetch(path);
-    if (!response.ok) return null;
-    return await response.text();
-  } catch (error) {
-    return null;
-  }
-}
-
-function extractImageHrefs(html, pattern) {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-
-  return Array.from(doc.querySelectorAll('a[href]'))
-    .map((link) => link.getAttribute('href') || '')
-    .filter((href) => pattern.test(href));
 }
 
 function toMediaPath(href) {
