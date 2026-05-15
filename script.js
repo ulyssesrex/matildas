@@ -1,3 +1,5 @@
+const cacheBustVersion = String(Date.now());
+
 const navLinks = document.querySelectorAll('.nav-link');
 
 navLinks.forEach((link) => {
@@ -48,7 +50,7 @@ const showsTable = document.querySelector('table[aria-label="Shows"]');
 if (showsTable) {
   const showsSectionBody = showsTable.closest('.section-body');
 
-  fetch('data/shows.json')
+  fetch(appendCacheBust('data/shows.json'))
     .then((response) => {
       if (!response.ok) {
         throw new Error('Failed to load show list');
@@ -155,6 +157,18 @@ function renderRichText(text, links = {}) {
 
     return `<a href="${safeUrl}" target="_blank" rel="noreferrer noopener">${safeText}</a>`;
   });
+}
+
+function appendCacheBust(path, version = cacheBustVersion) {
+  if (!path || /^https?:\/\//i.test(path)) return path;
+
+  const stringPath = String(path);
+  const hashIndex = stringPath.indexOf('#');
+  const hash = hashIndex >= 0 ? stringPath.slice(hashIndex) : '';
+  const basePath = hashIndex >= 0 ? stringPath.slice(0, hashIndex) : stringPath;
+  const separator = basePath.includes('?') ? '&' : '?';
+
+  return `${basePath}${separator}v=${encodeURIComponent(version)}${hash}`;
 }
 
 function escapeHtml(value) {
