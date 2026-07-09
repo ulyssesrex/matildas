@@ -10,12 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_07_193144) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_09_144251) do
   create_table "links", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
     t.datetime "updated_at", null: false
     t.string "url"
+  end
+
+  create_table "links_shows", id: false, force: :cascade do |t|
+    t.integer "link_id", null: false
+    t.integer "show_id", null: false
+    t.index ["link_id", "show_id"], name: "index_links_shows_on_link_id_and_show_id"
+    t.index ["show_id", "link_id"], name: "index_links_shows_on_show_id_and_link_id"
   end
 
   create_table "shows", force: :cascade do |t|
