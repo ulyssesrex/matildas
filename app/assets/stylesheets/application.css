@@ -72,6 +72,23 @@ body {
   min-height: 24rem;
 }
 
+.shows-table-wrap {
+  overflow-x: auto;
+}
+
+.shows-table {
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.shows-table td {
+  border-bottom: 1px solid #d8d8d8;
+  padding: 0.75rem;
+  text-align: left;
+}
+
 @media (max-width: 38rem) {
   .site-nav {
     justify-content: flex-start;

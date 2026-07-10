@@ -14,6 +14,23 @@
 
   <section id="shows" class="home-section">
     <h2>Shows</h2>
+
+    <div class="shows-table-wrap">
+      <table class="shows-table">
+        <tbody>
+          <% @shows.each do |show| %>
+            <% show_time = show.time.in_time_zone("Eastern Time (US & Canada)") %>
+            <tr>
+              <td><%= show_time.strftime("%B %-d, %Y") %></td>
+              <td><%= show_time.strftime("%-l:%M %p") %></td>
+              <td><%= show.venue.name %></td>
+              <td><%= "#{show.venue.city}, #{show.venue.state}" %></td>
+              <td><%= show.price %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <section id="misc" class="home-section">
