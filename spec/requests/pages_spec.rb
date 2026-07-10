@@ -2,6 +2,12 @@ require 'rails_helper'
 
 RSpec.describe "Pages", type: :request do
   describe "GET /" do
+    it "allows unauthenticated visitors" do
+      get root_path
+
+      expect(response).to have_http_status(:ok)
+    end
+
     it "renders navigation links to each home page section" do
       get root_path
 

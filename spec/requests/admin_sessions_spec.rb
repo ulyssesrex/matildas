@@ -1,6 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe "Admin sessions", type: :request do
+  describe "DELETE /admin/session" do
+    it "redirects unauthenticated visitors to the admin login page" do
+      delete admin_session_path
+
+      expect(response).to redirect_to(new_admin_session_path)
+    end
+  end
+
   describe "POST /admin/session" do
     it "redirects successful admin logins to the public home page" do
       User.create!(
