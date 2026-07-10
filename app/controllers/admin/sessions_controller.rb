@@ -13,7 +13,7 @@ class Admin::SessionsController < ApplicationController
       # Verification step: ensure the authenticated user is an administrator
       if user.admin?
         start_new_session_for user
-        redirect_to admin_root_path, notice: "Logged in to Admin Dashboard."
+        redirect_to root_path, notice: "Logged in as admin."
       else
         redirect_to new_admin_session_path, alert: "Access denied: Unauthorized account."
       end

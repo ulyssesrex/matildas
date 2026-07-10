@@ -3,8 +3,6 @@ Rails.application.routes.draw do
 
   # config/routes.rb
   namespace :admin do
-    root to: "pages#home"
-
     resource :session, only: [ :new, :create, :destroy ]
   end
 
