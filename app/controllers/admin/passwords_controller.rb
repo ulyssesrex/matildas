@@ -37,7 +37,7 @@ class Admin::PasswordsController < ApplicationController
   def set_user_by_token
     # Scopes token verification specifically to admin users
     @user = User.find_by_token_for!(:password_reset, params[:token])
-    
+
     unless @user.admin?
       redirect_to new_admin_session_path, alert: "Invalid access token clearance."
     end
@@ -45,4 +45,3 @@ class Admin::PasswordsController < ApplicationController
     redirect_to new_admin_password_path, alert: "Password reset link is invalid or expired."
   end
 end
-

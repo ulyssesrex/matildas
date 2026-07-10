@@ -18,4 +18,3 @@ RSpec.describe "Show", type: :model do
     end
   end
 end
-

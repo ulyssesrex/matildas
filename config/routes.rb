@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   root to: "pages#home"
-  
+
   # config/routes.rb
   namespace :admin do
     root to: "pages#home"

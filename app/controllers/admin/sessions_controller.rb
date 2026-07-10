@@ -1,7 +1,7 @@
 class Admin::SessionsController < ApplicationController
   # Allows an unauthenticated visitor to see and submit the admin login form
   allow_unauthenticated_access only: [ :new, :create ]
-  
+
   rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_admin_session_url, alert: "Try again later." }
 
   def new
@@ -27,4 +27,3 @@ class Admin::SessionsController < ApplicationController
     redirect_to new_admin_session_path, notice: "Logged out.", status: :see_other
   end
 end
-
