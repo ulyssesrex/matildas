@@ -5,7 +5,6 @@ Rails.application.routes.draw do
   namespace :admin do
     root to: "pages#home"
 
-    resource :password, param: :token, only: [ :new, :create, :edit, :update ]
     resource :session, only: [ :new, :create, :destroy ]
   end
 
