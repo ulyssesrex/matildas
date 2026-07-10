@@ -8,3 +8,77 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+:root {
+  --site-nav-height: 4.5rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+}
+
+.site-nav {
+  align-items: center;
+  background: #111;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  justify-content: center;
+  min-height: var(--site-nav-height);
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.site-nav__link {
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.site-nav__link:hover,
+.site-nav__link:focus {
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+
+.site-nav__brand {
+  margin-right: auto;
+}
+
+.home-page {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.home-section,
+.home-page {
+  scroll-margin-top: var(--site-nav-height);
+}
+
+.home-section {
+  min-height: 24rem;
+}
+
+@media (max-width: 38rem) {
+  .site-nav {
+    justify-content: flex-start;
+  }
+
+  .site-nav__brand {
+    flex-basis: 100%;
+    margin-right: 0;
+  }
+}
