@@ -7,9 +7,10 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+admin_email = Rails.application.credentials.dig(Rails.env, :admin_application_email)
 admin_password = Rails.application.credentials.dig(Rails.env, :admin_application_password)
 
-User.find_or_create_by!(email_address: "info@moonringers.com") do |user|
+User.find_or_create_by!(email_address: admin_email) do |user|
   user.admin = true
   user.password = admin_password
   user.password_confirmation = admin_password
