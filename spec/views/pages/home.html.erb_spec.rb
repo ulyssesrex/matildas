@@ -30,6 +30,41 @@ RSpec.describe "pages/home.html.erb", type: :view do
     expect(rendered).to include("$15")
   end
 
+  it "links a venue with a map URL and renders all Show links in the final cell" do
+    venue = Venue.new(
+      name: "Union Hall", city: "Brooklyn", state: "NY",
+      map_url: "https://maps.example/union"
+    )
+    show = Show.new(time: Time.utc(2026, 7, 10, 23, 30), price: "$15", venue: venue)
+    show.links = [
+      Link.new(name: "Tickets", url: "https://example.com/tickets"),
+      Link.new(name: "Details", url: "https://example.com/details")
+    ]
+
+    assign(:shows, [show])
+    render template: "pages/home"
+    row = Nokogiri::HTML.fragment(rendered).css(".shows-table tr").first
+
+    expect(row.at_css('a[href="https://maps.example/union"]')&.text).to eq("Union Hall")
+    expect(row.css("td").last.css("a").map { |anchor| [anchor.text, anchor["href"]] }).to eq([
+      ["Tickets", "https://example.com/tickets"],
+      ["Details", "https://example.com/details"]
+    ])
+  end
+
+  it "keeps an unlinked venue name and an empty final cell when no URLs exist" do
+    venue = Venue.new(name: "Union Hall", city: "Brooklyn", state: "NY")
+    show = Show.new(time: Time.utc(2026, 7, 10, 23, 30), price: "$15", venue: venue)
+
+    assign(:shows, [show])
+    render template: "pages/home"
+    row = Nokogiri::HTML.fragment(rendered).css(".shows-table tr").first
+
+    expect(row.text).to include("Union Hall")
+    expect(row.css("a")).to be_empty
+    expect(row.css("td").last.text.strip).to be_empty
+  end
+
   it "renders the two-panel show form for an admin" do
     allow(view).to receive(:admin?).and_return(true)
     assign(:shows, [])

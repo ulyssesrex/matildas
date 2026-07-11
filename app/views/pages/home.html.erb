@@ -27,9 +27,20 @@
             <tr>
               <td><%= show_time.strftime("%B %-d, %Y") %></td>
               <td><%= show_time.strftime("%-l:%M %p") %></td>
-              <td><%= show.venue&.name %></td>
+              <td>
+                <% if show.venue&.map_url.present? %>
+                  <%= link_to show.venue.name, show.venue.map_url %>
+                <% else %>
+                  <%= show.venue&.name %>
+                <% end %>
+              </td>
               <td><%= [show.venue&.city, show.venue&.state].compact_blank.join(", ") %></td>
               <td><%= show.price %></td>
+              <td class="shows-table__links">
+                <% show.links.each do |link| %>
+                  <%= link_to link.name, link.url %>
+                <% end %>
+              </td>
             </tr>
           <% end %>
         </tbody>
