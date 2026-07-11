@@ -10,20 +10,38 @@
  */
 
 :root {
+  --color-black: #000;
+  --color-white: #fff;
   --site-nav-height: 4.5rem;
 }
 
 html {
+  background: var(--color-black);
+  color: var(--color-white);
+  font-family: Helvetica, Arial, sans-serif;
   scroll-behavior: smooth;
+  text-transform: uppercase;
 }
 
 body {
+  background: var(--color-black);
+  color: var(--color-white);
   margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 3px;
 }
 
 .site-nav {
   align-items: center;
-  background: #111;
+  background: var(--color-black);
+  border-bottom: 1px solid var(--color-white);
   box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
@@ -37,8 +55,7 @@ body {
 }
 
 .site-nav__link {
-  color: #fff;
-  font-family: Arial, sans-serif;
+  color: var(--color-white);
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0;
@@ -78,25 +95,26 @@ body {
 
 .shows-table {
   border-collapse: collapse;
-  font-family: Arial, sans-serif;
   margin-top: 1rem;
   width: 100%;
 }
 
 .shows-table td {
-  border-bottom: 1px solid #d8d8d8;
+  border: 1px solid var(--color-white);
   padding: 0.75rem;
   text-align: left;
 }
 
 .flash {
-  border: 1px solid #b7b7b7;
+  background: var(--color-black);
+  border: 1px solid var(--color-white);
+  color: var(--color-white);
+  font-weight: 700;
   padding: 0.75rem 1rem;
 }
 
 .admin-show-form {
-  border-top: 2px solid #111;
-  font-family: Arial, sans-serif;
+  border-top: 2px solid var(--color-white);
   margin-top: 2rem;
   padding-top: 1.5rem;
 }
@@ -108,7 +126,7 @@ body {
 }
 
 .admin-show-form__panel {
-  border: 1px solid #b7b7b7;
+  border: 1px solid var(--color-white);
   min-width: 0;
   padding: 1.25rem;
 }
@@ -132,14 +150,23 @@ body {
 }
 
 .form-field input[type="date"],
+.form-field input[type="email"],
+.form-field input[type="password"],
 .form-field input[type="time"],
 .form-field input[type="text"],
 .form-field input[type="url"],
-.form-field select {
+.form-field select,
+input[type="email"],
+input[type="password"] {
+  background: var(--color-black);
+  border: 1px solid var(--color-white);
+  border-radius: 0;
   box-sizing: border-box;
+  color: var(--color-white);
   font: inherit;
   max-width: 100%;
   padding: 0.55rem;
+  text-transform: uppercase;
   width: 100%;
 }
 
@@ -155,13 +182,13 @@ body {
 }
 
 .form-divider {
-  border-top: 1px solid #d8d8d8;
+  border-top: 1px solid var(--color-white);
   margin: 1.5rem 0;
   text-align: center;
 }
 
 .form-divider span {
-  background: #fff;
+  background: var(--color-black);
   padding: 0 0.75rem;
   position: relative;
   top: -0.65rem;
@@ -175,29 +202,33 @@ body {
   margin-bottom: 0.75rem;
 }
 
-.form-button {
-  border: 1px solid #111;
+.form-button,
+input[type="submit"] {
+  border: 1px solid var(--color-white);
+  border-radius: 0;
   cursor: pointer;
   font: inherit;
   padding: 0.6rem 0.9rem;
+  text-transform: uppercase;
 }
 
-.form-button--primary {
-  background: #111;
-  color: #fff;
+.form-button--primary,
+input[type="submit"] {
+  background: var(--color-white);
+  color: var(--color-black);
   font-weight: 700;
   margin-top: 1rem;
 }
 
 .form-button--secondary {
-  background: #fff;
-  color: #111;
+  background: var(--color-black);
+  color: var(--color-white);
 }
 
 .form-errors {
-  background: #fff2f2;
-  border: 1px solid #a40000;
-  color: #760000;
+  background: var(--color-black);
+  border: 1px solid var(--color-white);
+  color: var(--color-white);
   margin-bottom: 1rem;
   padding: 0.75rem 1rem;
 }
@@ -207,13 +238,13 @@ body {
 }
 
 .field-error {
-  color: #a40000;
+  color: var(--color-white);
   font-size: 0.875rem;
   margin: 0.25rem 0 0;
 }
 
 .form-hint {
-  color: #555;
+  color: var(--color-white);
   margin: 0;
 }
 
