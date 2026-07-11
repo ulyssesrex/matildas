@@ -3,9 +3,12 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["template", "rows"]
 
+  connect() {
+    this.nextIndex = Date.now()
+  }
+
   add() {
-    const key = `${Date.now()}-${Math.random().toString(16).slice(2)}`
-    const row = this.templateTarget.innerHTML.replaceAll("NEW_RECORD", key)
+    const row = this.templateTarget.innerHTML.replaceAll("NEW_RECORD", this.nextIndex++)
     this.rowsTarget.insertAdjacentHTML("beforeend", row)
   }
 
