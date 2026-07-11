@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   # config/routes.rb
   namespace :admin do
     resource :session, only: [ :new, :create, :destroy ]
-    resources :shows, only: :create
+    resources :shows, only: [ :create, :edit, :update ]
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

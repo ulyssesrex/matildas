@@ -41,13 +41,28 @@
                   <%= link_to link.name, link.url %>
                 <% end %>
               </td>
+              <% if admin? %>
+                <td class="shows-table__edit">
+                  <%= link_to "Edit", edit_admin_show_path(show), class: "form-button form-button--secondary" %>
+                </td>
+              <% end %>
             </tr>
           <% end %>
         </tbody>
       </table>
     </div>
 
-    <%= render "pages/admin_show_form", form: @show_form, venues: @venues, links: @links if admin? %>
+    <% if admin? %>
+      <%= render "pages/admin_show_form",
+            form: @show_form,
+            venues: @venues,
+            links: @links,
+            form_url: admin_shows_path,
+            form_method: :post,
+            title: "Add a Show",
+            submit_label: "Create Show",
+            error_action: "created" %>
+    <% end %>
   </section>
 
   <section id="misc" class="home-section">

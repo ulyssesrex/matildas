@@ -1,0 +1,13 @@
+<main class="admin-edit-page">
+  <%= link_to "Back to Shows", root_path(anchor: "shows"), class: "admin-edit-page__back" %>
+
+  <%= render "pages/admin_show_form",
+        form: @show_form,
+        venues: @venues,
+        links: @links,
+        form_url: admin_show_path(@show),
+        form_method: :patch,
+        title: "Edit Show",
+        submit_label: "Update Show",
+        error_action: "updated" %>
+</main>

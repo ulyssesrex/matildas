@@ -3,11 +3,11 @@
 <% selected_link_ids = Array(form.link_ids).map(&:to_s) %>
 
 <div class="admin-show-form" aria-labelledby="admin-show-form-title">
-  <h3 id="admin-show-form-title">Add a Show</h3>
+  <h3 id="admin-show-form-title"><%= title %></h3>
 
   <% if form.errors.any? %>
     <div class="form-errors" role="alert">
-      <h4><%= pluralize(form.errors.count, "error") %> prevented this Show from being created:</h4>
+      <h4><%= pluralize(form.errors.count, "error") %> prevented this Show from being <%= error_action %>:</h4>
       <ul>
         <% form.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -16,7 +16,7 @@
     </div>
   <% end %>
 
-  <%= form_with model: form, url: admin_shows_path, class: "admin-show-form__form" do |show_fields| %>
+  <%= form_with model: form, url: form_url, method: form_method, class: "admin-show-form__form" do |show_fields| %>
     <div class="admin-show-form__panels">
       <fieldset class="admin-show-form__panel">
         <legend>Show details and Links</legend>
@@ -121,6 +121,6 @@
       </fieldset>
     </div>
 
-    <%= show_fields.submit "Create Show", class: "form-button form-button--primary" %>
+    <%= show_fields.submit submit_label, class: "form-button form-button--primary" %>
   <% end %>
 </div>

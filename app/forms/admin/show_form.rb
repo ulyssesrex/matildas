@@ -22,7 +22,11 @@ module Admin
     validate :new_link_rows_are_complete
 
     def initialize(attributes = {})
-      super
+      attributes = attributes.to_h
+      @show = attributes.delete(:show) || attributes.delete("show")
+      attributes = attributes_from_show if attributes.empty?
+
+      super(attributes)
       self.link_ids ||= []
       self.new_venue ||= {}
       self.new_links ||= {}
@@ -33,7 +37,8 @@ module Admin
 
       ApplicationRecord.transaction do
         venue = existing_venue || create_new_venue
-        @show = Show.create!(time: parsed_time, price: price, venue: venue)
+        @show ||= Show.new
+        @show.update!(time: parsed_time, price: price, venue: venue)
         @show.links = existing_links
         normalized_new_links.each { |link_attributes| @show.links << Link.create!(link_attributes) }
       end
@@ -51,6 +56,19 @@ module Admin
     end
 
     private
+
+      def attributes_from_show
+        return {} unless show
+
+        eastern_time = show.time.in_time_zone("Eastern Time (US & Canada)")
+        {
+          date: eastern_time.to_date.iso8601,
+          time: eastern_time.strftime("%H:%M"),
+          price: show.price,
+          venue_id: show.venue_id&.to_s,
+          link_ids: show.link_ids.map(&:to_s)
+        }
+      end
 
       def parsed_date
         @parsed_date ||= Date.iso8601(date.to_s)

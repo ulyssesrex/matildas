@@ -119,6 +119,19 @@ a {
   padding-top: 1.5rem;
 }
 
+.admin-edit-page {
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 72rem;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.admin-edit-page__back,
+.shows-table__edit a {
+  display: inline-block;
+}
+
 .admin-show-form__panels {
   display: grid;
   gap: 1.5rem;

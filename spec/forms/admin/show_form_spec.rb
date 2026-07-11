@@ -115,4 +115,85 @@ RSpec.describe Admin::ShowForm do
     expect { form.save }.not_to change { [Show.count, Venue.count, Link.count] }
     expect(form.errors[:base]).to be_present
   end
+
+  describe "editing" do
+    let!(:venue) do
+      Venue.create!(
+        name: "Union Hall", city: "Brooklyn", state: "NY",
+        map_url: "https://maps.example/union"
+      )
+    end
+    let!(:replacement_venue) do
+      Venue.create!(
+        name: "The Sinclair", city: "Cambridge", state: "MA",
+        map_url: "https://maps.example/sinclair"
+      )
+    end
+    let!(:existing_link) { Link.create!(name: "Venue", url: "https://example.com/venue") }
+    let!(:replacement_link) { Link.create!(name: "Details", url: "https://example.com/details") }
+    let!(:show) do
+      Show.create!(time: Time.utc(2026, 7, 10, 23, 30), price: "$15", venue: venue).tap do |record|
+        record.links = [ existing_link ]
+      end
+    end
+
+    it "prefills attributes and associations from the show" do
+      form = described_class.new(show: show)
+
+      expect(form).to have_attributes(
+        date: "2026-07-10", time: "19:30", price: "$15",
+        venue_id: venue.id.to_s, link_ids: [ existing_link.id.to_s ]
+      )
+    end
+
+    it "updates fields and replaces existing associations" do
+      form = described_class.new(
+        show: show,
+        date: "2026-08-12", time: "20:15", price: "$20",
+        venue_id: replacement_venue.id.to_s,
+        link_ids: [ replacement_link.id.to_s ]
+      )
+
+      expect(form.save).to be(true)
+      expect(show.reload).to have_attributes(
+        time: Time.utc(2026, 8, 13, 0, 15), price: "$20", venue: replacement_venue
+      )
+      expect(show.links).to contain_exactly(replacement_link)
+    end
+
+    it "creates a new venue and link while editing" do
+      form = described_class.new(
+        show: show,
+        date: "2026-07-10", time: "19:30", price: "$18",
+        new_venue: {
+          name: "Elsewhere", city: "Brooklyn", state: "NY",
+          map_url: "https://maps.example/elsewhere"
+        },
+        new_links: {
+          "0" => { name: "Tickets", url: "https://example.com/tickets" }
+        }
+      )
+
+      expect { form.save }.to change(Venue, :count).by(1).and change(Link, :count).by(1)
+      expect(show.reload.venue.name).to eq("Elsewhere")
+      expect(show.links.pluck(:name)).to contain_exactly("Tickets")
+    end
+
+    it "rolls back show updates when an associated record fails" do
+      allow(Link).to receive(:create!).and_raise(ActiveRecord::RecordInvalid.new(Link.new))
+      form = described_class.new(
+        show: show,
+        date: "2026-08-12", time: "20:15", price: "$20",
+        new_links: {
+          "0" => { name: "Tickets", url: "https://example.com/tickets" }
+        }
+      )
+
+      expect(form.save).to be(false)
+      expect(show.reload).to have_attributes(
+        time: Time.utc(2026, 7, 10, 23, 30), price: "$15", venue: venue
+      )
+      expect(show.links).to contain_exactly(existing_link)
+    end
+  end
 end

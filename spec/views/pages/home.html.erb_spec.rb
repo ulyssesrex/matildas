@@ -83,4 +83,28 @@ RSpec.describe "pages/home.html.erb", type: :view do
     expect(rendered).to include('data-action="link-rows#remove"')
     expect(rendered).to include("Create Show")
   end
+
+  it "does not render an Edit column for non-admins" do
+    show = Show.create!(time: Time.utc(2026, 7, 10, 23, 30), price: "$15")
+    assign(:shows, [ show ])
+
+    render template: "pages/home"
+
+    expect(Nokogiri::HTML.fragment(rendered).css(".shows-table__edit")).to be_empty
+  end
+
+  it "renders a separate Edit cell for each Show when admin" do
+    allow(view).to receive(:admin?).and_return(true)
+    show = Show.create!(time: Time.utc(2026, 7, 10, 23, 30), price: "$15")
+    assign(:shows, [ show ])
+    assign(:show_form, Admin::ShowForm.new)
+    assign(:venues, [])
+    assign(:links, [])
+
+    render template: "pages/home"
+
+    cell = Nokogiri::HTML.fragment(rendered).at_css(".shows-table__edit")
+    expect(cell.at_css("a")["href"]).to eq(edit_admin_show_path(show))
+    expect(cell.at_css("a").text).to eq("Edit")
+  end
 end
