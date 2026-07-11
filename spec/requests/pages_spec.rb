@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe "Pages", type: :request do
+  def sign_in(user)
+    post admin_session_path, params: { email_address: user.email_address, password: "password" }
+  end
+
   describe "GET /" do
     it "allows unauthenticated visitors" do
       get root_path
@@ -21,6 +25,31 @@ RSpec.describe "Pages", type: :request do
       expect(response.body).to include('<section id="music"')
       expect(response.body).to include('<section id="shows"')
       expect(response.body).to include('<section id="misc"')
+    end
+
+    it "does not show the creation form to unauthenticated visitors" do
+      get root_path
+
+      expect(response.body).not_to include("Create Show")
+    end
+
+    it "shows the creation form to admins" do
+      admin = User.create!(email_address: "admin@example.com", password: "password", admin: true)
+      sign_in(admin)
+
+      get root_path
+
+      expect(response.body).to include("Create Show")
+    end
+
+    it "does not show the creation form to a signed-in non-admin" do
+      user = User.create!(email_address: "former-admin@example.com", password: "password", admin: true)
+      sign_in(user)
+      user.update!(admin: false)
+
+      get root_path
+
+      expect(response.body).not_to include("Create Show")
     end
   end
 end

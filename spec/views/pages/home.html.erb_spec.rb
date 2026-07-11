@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe "pages/home.html.erb", type: :view do
+  before do
+    allow(view).to receive(:admin?).and_return(false)
+  end
+
   it "renders shows with venue details and Eastern Time formatting" do
     venue = Venue.new(name: "Union Hall", city: "Brooklyn", state: "NY")
     show = Show.new(
@@ -24,5 +28,24 @@ RSpec.describe "pages/home.html.erb", type: :view do
     expect(rendered).to include("Union Hall")
     expect(rendered).to include("Brooklyn, NY")
     expect(rendered).to include("$15")
+  end
+
+  it "renders the two-panel show form for an admin" do
+    allow(view).to receive(:admin?).and_return(true)
+    assign(:shows, [])
+    assign(:show_form, Admin::ShowForm.new)
+    assign(:venues, [Venue.new(id: 1, name: "Union Hall", city: "Brooklyn", state: "NY")])
+    assign(:links, [Link.new(id: 1, name: "Tickets")])
+
+    render template: "pages/home"
+
+    expect(rendered).to include('class="admin-show-form__panels"')
+    expect(rendered).to include("Date", "Time", "Price", "Existing venue")
+    expect(rendered).to include("City", "State", "Map URL", "Name")
+    expect(rendered).to include("Tickets")
+    expect(rendered).to include('data-controller="link-rows"')
+    expect(rendered).to include('data-action="link-rows#add"')
+    expect(rendered).to include('data-action="link-rows#remove"')
+    expect(rendered).to include("Create Show")
   end
 end

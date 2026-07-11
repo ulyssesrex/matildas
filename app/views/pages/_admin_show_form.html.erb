@@ -1,0 +1,126 @@
+<% new_venue = form.new_venue.respond_to?(:to_unsafe_h) ? form.new_venue.to_unsafe_h : form.new_venue.to_h %>
+<% new_venue = new_venue.stringify_keys %>
+<% selected_link_ids = Array(form.link_ids).map(&:to_s) %>
+
+<div class="admin-show-form" aria-labelledby="admin-show-form-title">
+  <h3 id="admin-show-form-title">Add a Show</h3>
+
+  <% if form.errors.any? %>
+    <div class="form-errors" role="alert">
+      <h4><%= pluralize(form.errors.count, "error") %> prevented this Show from being created:</h4>
+      <ul>
+        <% form.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_with model: form, url: admin_shows_path, class: "admin-show-form__form" do |show_fields| %>
+    <div class="admin-show-form__panels">
+      <fieldset class="admin-show-form__panel">
+        <legend>Show details and Links</legend>
+
+        <div class="form-field">
+          <%= show_fields.label :date, "Date" %>
+          <%= show_fields.date_field :date, required: true %>
+          <% form.errors.full_messages_for(:date).each do |message| %><p class="field-error"><%= message %></p><% end %>
+        </div>
+
+        <div class="form-field">
+          <%= show_fields.label :time, "Time (Eastern)" %>
+          <%= show_fields.time_field :time, required: true %>
+          <% form.errors.full_messages_for(:time).each do |message| %><p class="field-error"><%= message %></p><% end %>
+        </div>
+
+        <div class="form-field">
+          <%= show_fields.label :price, "Price" %>
+          <%= show_fields.text_field :price, required: true %>
+          <% form.errors.full_messages_for(:price).each do |message| %><p class="field-error"><%= message %></p><% end %>
+        </div>
+
+        <div class="form-field">
+          <span class="form-label">Existing Links</span>
+          <% if links.any? %>
+            <div class="form-checkboxes">
+              <% links.each do |link| %>
+                <label>
+                  <%= check_box_tag "admin_show_form[link_ids][]", link.id,
+                        selected_link_ids.include?(link.id.to_s), id: "admin_show_form_link_ids_#{link.id}" %>
+                  <%= link.name %>
+                </label>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="form-hint">No existing Links.</p>
+          <% end %>
+          <% form.errors.full_messages_for(:link_ids).each do |message| %><p class="field-error"><%= message %></p><% end %>
+        </div>
+
+        <div class="form-field" data-controller="link-rows">
+          <span class="form-label">New Links</span>
+          <div class="new-link-rows" data-link-rows-target="rows">
+            <% form.submitted_new_links.each_with_index do |link, index| %>
+              <div class="new-link-row" data-link-row>
+                <label>
+                  <span>Name</span>
+                  <%= text_field_tag "admin_show_form[new_links][#{index}][name]", link["name"] %>
+                </label>
+                <label>
+                  <span>URL</span>
+                  <%= url_field_tag "admin_show_form[new_links][#{index}][url]", link["url"] %>
+                </label>
+                <button type="button" class="form-button form-button--secondary" data-action="link-rows#remove">Remove</button>
+              </div>
+            <% end %>
+          </div>
+          <% form.errors.full_messages_for(:new_links).each do |message| %><p class="field-error"><%= message %></p><% end %>
+          <button type="button" class="form-button form-button--secondary" data-action="link-rows#add">Add another Link</button>
+
+          <template data-link-rows-target="template">
+            <div class="new-link-row" data-link-row>
+              <label>
+                <span>Name</span>
+                <input type="text" name="admin_show_form[new_links][NEW_RECORD][name]">
+              </label>
+              <label>
+                <span>URL</span>
+                <input type="url" name="admin_show_form[new_links][NEW_RECORD][url]">
+              </label>
+              <button type="button" class="form-button form-button--secondary" data-action="link-rows#remove">Remove</button>
+            </div>
+          </template>
+        </div>
+      </fieldset>
+
+      <fieldset class="admin-show-form__panel">
+        <legend>Venue</legend>
+
+        <div class="form-field">
+          <%= show_fields.label :venue_id, "Existing venue" %>
+          <%= show_fields.collection_select :venue_id, venues, :id, :name,
+                { include_blank: "Choose an existing Venue" } %>
+          <% form.errors.full_messages_for(:venue_id).each do |message| %><p class="field-error"><%= message %></p><% end %>
+          <% form.errors.full_messages_for(:venue).each do |message| %><p class="field-error"><%= message %></p><% end %>
+        </div>
+
+        <p class="form-divider"><span>or create a Venue</span></p>
+
+        <% { "name" => "Name", "city" => "City", "state" => "State", "map_url" => "Map URL" }.each do |field, label| %>
+          <div class="form-field">
+            <%= label_tag "admin_show_form_new_venue_#{field}", label %>
+            <% input_name = "admin_show_form[new_venue][#{field}]" %>
+            <% if field == "map_url" %>
+              <%= url_field_tag input_name, new_venue[field], id: "admin_show_form_new_venue_#{field}" %>
+            <% else %>
+              <%= text_field_tag input_name, new_venue[field], id: "admin_show_form_new_venue_#{field}" %>
+            <% end %>
+            <% form.errors.full_messages_for("new_venue_#{field}".to_sym).each do |message| %><p class="field-error"><%= message %></p><% end %>
+          </div>
+        <% end %>
+      </fieldset>
+    </div>
+
+    <%= show_fields.submit "Create Show", class: "form-button form-button--primary" %>
+  <% end %>
+</div>

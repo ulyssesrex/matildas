@@ -8,6 +8,10 @@
 <main id="top" class="home-page">
   <h1>THE MOON RINGERS</h1>
 
+  <% flash.each do |type, message| %>
+    <p class="flash flash--<%= type %>" role="status"><%= message %></p>
+  <% end %>
+
   <section id="music" class="home-section">
     <h2>Music</h2>
   </section>
@@ -23,14 +27,16 @@
             <tr>
               <td><%= show_time.strftime("%B %-d, %Y") %></td>
               <td><%= show_time.strftime("%-l:%M %p") %></td>
-              <td><%= show.venue.name %></td>
-              <td><%= "#{show.venue.city}, #{show.venue.state}" %></td>
+              <td><%= show.venue&.name %></td>
+              <td><%= [show.venue&.city, show.venue&.state].compact_blank.join(", ") %></td>
               <td><%= show.price %></td>
             </tr>
           <% end %>
         </tbody>
       </table>
     </div>
+
+    <%= render "pages/admin_show_form", form: @show_form, venues: @venues, links: @links if admin? %>
   </section>
 
   <section id="misc" class="home-section">

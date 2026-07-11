@@ -89,6 +89,134 @@ body {
   text-align: left;
 }
 
+.flash {
+  border: 1px solid #b7b7b7;
+  padding: 0.75rem 1rem;
+}
+
+.admin-show-form {
+  border-top: 2px solid #111;
+  font-family: Arial, sans-serif;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+}
+
+.admin-show-form__panels {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-show-form__panel {
+  border: 1px solid #b7b7b7;
+  min-width: 0;
+  padding: 1.25rem;
+}
+
+.admin-show-form__panel legend {
+  font-size: 1.125rem;
+  font-weight: 700;
+  padding: 0 0.5rem;
+}
+
+.form-field {
+  margin-bottom: 1rem;
+}
+
+.form-field > label,
+.form-label,
+.new-link-row label span {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.form-field input[type="date"],
+.form-field input[type="time"],
+.form-field input[type="text"],
+.form-field input[type="url"],
+.form-field select {
+  box-sizing: border-box;
+  font: inherit;
+  max-width: 100%;
+  padding: 0.55rem;
+  width: 100%;
+}
+
+.form-checkboxes {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.form-checkboxes label {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.form-divider {
+  border-top: 1px solid #d8d8d8;
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.form-divider span {
+  background: #fff;
+  padding: 0 0.75rem;
+  position: relative;
+  top: -0.65rem;
+}
+
+.new-link-row {
+  align-items: end;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr 2fr auto;
+  margin-bottom: 0.75rem;
+}
+
+.form-button {
+  border: 1px solid #111;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.6rem 0.9rem;
+}
+
+.form-button--primary {
+  background: #111;
+  color: #fff;
+  font-weight: 700;
+  margin-top: 1rem;
+}
+
+.form-button--secondary {
+  background: #fff;
+  color: #111;
+}
+
+.form-errors {
+  background: #fff2f2;
+  border: 1px solid #a40000;
+  color: #760000;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+.form-errors h4 {
+  margin: 0;
+}
+
+.field-error {
+  color: #a40000;
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0;
+}
+
+.form-hint {
+  color: #555;
+  margin: 0;
+}
+
 @media (max-width: 38rem) {
   .site-nav {
     justify-content: flex-start;
@@ -97,5 +225,16 @@ body {
   .site-nav__brand {
     flex-basis: 100%;
     margin-right: 0;
+  }
+}
+
+@media (max-width: 48rem) {
+  .admin-show-form__panels,
+  .new-link-row {
+    grid-template-columns: 1fr;
+  }
+
+  .new-link-row {
+    align-items: stretch;
   }
 }
