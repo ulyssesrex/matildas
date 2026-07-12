@@ -66,26 +66,31 @@
           </div>
         </div>
 
-        <div class="form-field">
-          <span class="form-label">Existing Artists</span>
+        <div class="form-field" data-controller="artist-select">
           <% if links.any? %>
-            <div class="form-checkboxes">
-              <% links.each do |link| %>
-                <label>
-                  <%= check_box_tag "admin_show_form[link_ids][]", link.id,
-                        selected_link_ids.include?(link.id.to_s), id: "admin_show_form_link_ids_#{link.id}" %>
-                  <%= link.name %>
-                </label>
-              <% end %>
-            </div>
+            <%= label_tag :admin_show_form_link_ids, "With artists", class: "form-label" %>
+            <%= label_tag :artist_search, "Search artists" %>
+            <%= search_field_tag :artist_search, nil,
+                  autocomplete: "off",
+                  data: {
+                    action: "input->artist-select#filter",
+                    artist_select_target: "search"
+                  } %>
+            <%= select_tag "admin_show_form[link_ids][]",
+                  options_from_collection_for_select(links, :id, :name, selected_link_ids),
+                  id: "admin_show_form_link_ids",
+                  multiple: true,
+                  size: [ [ links.size, 4 ].max, 8 ].min,
+                  data: { artist_select_target: "select" } %>
           <% else %>
+            <span class="form-label">With artists</span>
             <p class="form-hint">No existing Artists.</p>
           <% end %>
           <% form.errors.full_messages_for(:link_ids).each do |message| %><p class="field-error"><%= message %></p><% end %>
         </div>
 
         <div class="form-field" data-controller="link-rows">
-          <span class="form-label">New Artists</span>
+          <p class="form-divider"><span>Or Create An Artist</span></p>
           <div class="new-link-rows" data-link-rows-target="rows">
             <% form.submitted_new_links.each_with_index do |link, index| %>
               <div class="new-link-row" data-link-row>
