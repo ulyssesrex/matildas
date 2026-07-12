@@ -30,6 +30,9 @@
 
 /public/assets
 
+# Server-local development tooling and gems.
+/.local/
+
 # Local visual brainstorming sessions.
 /.superpowers/
 
