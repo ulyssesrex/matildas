@@ -10,6 +10,9 @@ module Admin
     attribute :time, :string
     attribute :price, :string
     attribute :venue_id, :string
+    attribute :cancelled, :boolean, default: false
+    attribute :notes, :string
+    attribute :cancellation_notes, :string
 
     attr_accessor :link_ids, :new_venue, :new_links
     attr_reader :show
@@ -38,7 +41,15 @@ module Admin
       ApplicationRecord.transaction do
         venue = existing_venue || create_new_venue
         @show ||= Show.new
-        @show.update!(date: parsed_date, time: parsed_time, price: price, venue: venue)
+        @show.update!(
+          date: parsed_date,
+          time: parsed_time,
+          price: price,
+          venue: venue,
+          cancelled: cancelled,
+          notes: notes,
+          cancellation_notes: cancellation_notes
+        )
         @show.links = existing_links
         normalized_new_links.each { |link_attributes| @show.links << Link.create!(link_attributes) }
       end
@@ -65,7 +76,10 @@ module Admin
           time: show.time&.strftime("%H:%M"),
           price: show.price,
           venue_id: show.venue_id&.to_s,
-          link_ids: show.link_ids.map(&:to_s)
+          link_ids: show.link_ids.map(&:to_s),
+          cancelled: show.cancelled,
+          notes: show.notes,
+          cancellation_notes: show.cancellation_notes
         }
       end
 

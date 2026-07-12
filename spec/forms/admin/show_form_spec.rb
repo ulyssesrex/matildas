@@ -29,6 +29,24 @@ RSpec.describe Admin::ShowForm do
     expect(form.show).to have_attributes(date: Date.new(2026, 7, 10), time: nil)
   end
 
+  it "persists cancellation state and both kinds of notes" do
+    form = described_class.new(attributes.merge(
+      cancelled: "1", notes: "Doors at 7", cancellation_notes: "Venue closed"
+    ))
+
+    expect(form.save).to be(true)
+    expect(form.show).to have_attributes(
+      cancelled: true, notes: "Doors at 7", cancellation_notes: "Venue closed"
+    )
+  end
+
+  it "allows a cancelled show without cancellation notes" do
+    form = described_class.new(attributes.merge(cancelled: "1", cancellation_notes: ""))
+
+    expect(form.save).to be(true)
+    expect(form.show).to have_attributes(cancelled: true, cancellation_notes: "")
+  end
+
   it "rejects invalid dates and times" do
     form = described_class.new(attributes.merge(date: "2026-02-30", time: "25:00"))
 
@@ -187,6 +205,7 @@ RSpec.describe Admin::ShowForm do
       form = described_class.new(
         show: show,
         date: "2026-08-12", time: "20:15", price: "$20",
+        cancelled: "1", notes: "Updated notes", cancellation_notes: "Venue closed",
         new_links: {
           "0" => { name: "Tickets", url: "https://example.com/tickets" }
         }
@@ -194,10 +213,35 @@ RSpec.describe Admin::ShowForm do
 
       expect(form.save).to be(false)
       expect(show.reload).to have_attributes(
-        date: Date.new(2026, 7, 10), price: "$15", venue: venue
+        date: Date.new(2026, 7, 10), price: "$15", venue: venue,
+        cancelled: false, notes: nil, cancellation_notes: nil
       )
       expect(show.time.strftime("%H:%M")).to eq("19:30")
       expect(show.links).to contain_exactly(existing_link)
+    end
+
+    it "prefills and preserves both notes through cancellation changes" do
+      show.update!(notes: "Doors at 7")
+
+      cancel_form = described_class.new(
+        show: show, date: "2026-07-10", time: "19:30", price: "$15",
+        cancelled: "1", notes: "Doors at 7", cancellation_notes: "Venue closed"
+      )
+      expect(cancel_form.save).to be(true)
+
+      prefilled = described_class.new(show: show.reload)
+      expect(prefilled).to have_attributes(
+        cancelled: true, notes: "Doors at 7", cancellation_notes: "Venue closed"
+      )
+
+      active_form = described_class.new(
+        show: show, date: "2026-07-10", time: "19:30", price: "$15",
+        cancelled: "0", notes: "Doors at 7", cancellation_notes: "Venue closed"
+      )
+      expect(active_form.save).to be(true)
+      expect(show.reload).to have_attributes(
+        cancelled: false, notes: "Doors at 7", cancellation_notes: "Venue closed"
+      )
     end
 
     it "prefills a TBD show with a blank time" do
