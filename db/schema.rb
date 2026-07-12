@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_09_204019) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_11_120000) do
   create_table "links", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
@@ -36,10 +36,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_09_204019) do
 
   create_table "shows", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.date "date", null: false
     t.string "location"
     t.text "notes"
     t.string "price"
-    t.datetime "time"
+    t.time "time"
     t.datetime "updated_at", null: false
     t.integer "venue_id"
     t.index ["venue_id"], name: "index_shows_on_venue_id"

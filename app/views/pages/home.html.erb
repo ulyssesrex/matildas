@@ -23,10 +23,9 @@
       <table class="shows-table">
         <tbody>
           <% @shows.each do |show| %>
-            <% show_time = show.time.in_time_zone("Eastern Time (US & Canada)") %>
             <tr>
-              <td><%= show_time.strftime("%B %-d, %Y") %></td>
-              <td><%= show_time.strftime("%-l:%M %p") %></td>
+              <td><%= show.date.strftime("%B %-d, %Y") %></td>
+              <td><%= show.time&.strftime("%-l:%M %p") || "TBD" %></td>
               <td>
                 <% if show.venue&.map_url.present? %>
                   <%= link_to show.venue.name, show.venue.map_url %>

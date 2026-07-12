@@ -8,7 +8,8 @@ RSpec.describe "pages/home.html.erb", type: :view do
   it "renders shows with venue details and Eastern Time formatting" do
     venue = Venue.new(name: "Union Hall", city: "Brooklyn", state: "NY")
     show = Show.new(
-      time: Time.utc(2026, 7, 10, 23, 30),
+      date: Date.new(2026, 7, 10),
+      time: "19:30",
       price: "$15",
       venue: venue
     )
@@ -35,7 +36,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
       name: "Union Hall", city: "Brooklyn", state: "NY",
       map_url: "https://maps.example/union"
     )
-    show = Show.new(time: Time.utc(2026, 7, 10, 23, 30), price: "$15", venue: venue)
+    show = Show.new(date: Date.new(2026, 7, 10), time: "19:30", price: "$15", venue: venue)
     show.links = [
       Link.new(name: "Tickets", url: "https://example.com/tickets"),
       Link.new(name: "Details", url: "https://example.com/details")
@@ -54,7 +55,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
 
   it "keeps an unlinked venue name and an empty final cell when no URLs exist" do
     venue = Venue.new(name: "Union Hall", city: "Brooklyn", state: "NY")
-    show = Show.new(time: Time.utc(2026, 7, 10, 23, 30), price: "$15", venue: venue)
+    show = Show.new(date: Date.new(2026, 7, 10), time: "19:30", price: "$15", venue: venue)
 
     assign(:shows, [show])
     render template: "pages/home"
@@ -85,7 +86,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
   end
 
   it "does not render an Edit column for non-admins" do
-    show = Show.create!(time: Time.utc(2026, 7, 10, 23, 30), price: "$15")
+    show = Show.create!(date: Date.new(2026, 7, 10), time: "19:30", price: "$15")
     assign(:shows, [ show ])
 
     render template: "pages/home"
@@ -95,7 +96,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
 
   it "renders a separate Edit cell for each Show when admin" do
     allow(view).to receive(:admin?).and_return(true)
-    show = Show.create!(time: Time.utc(2026, 7, 10, 23, 30), price: "$15")
+    show = Show.create!(date: Date.new(2026, 7, 10), time: "19:30", price: "$15")
     assign(:shows, [ show ])
     assign(:show_form, Admin::ShowForm.new)
     assign(:venues, [])
@@ -106,5 +107,16 @@ RSpec.describe "pages/home.html.erb", type: :view do
     cell = Nokogiri::HTML.fragment(rendered).at_css(".shows-table__edit")
     expect(cell.at_css("a")["href"]).to eq(edit_admin_show_path(show))
     expect(cell.at_css("a").text).to eq("Edit")
+  end
+
+  it "renders TBD when a show has no time" do
+    show = Show.new(date: Date.new(2026, 7, 10), time: nil, price: "$15")
+    assign(:shows, [show])
+
+    render template: "pages/home"
+
+    row = Nokogiri::HTML.fragment(rendered).at_css(".shows-table tr")
+    expect(row.css("td")[0].text).to include("July 10, 2026")
+    expect(row.css("td")[1].text.strip).to eq("TBD")
   end
 end

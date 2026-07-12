@@ -2,7 +2,7 @@ class PagesController < ApplicationController
   allow_unauthenticated_access
 
   def home
-    @shows = Show.unexpired.includes(:venue, :links).order(:time)
+    @shows = Show.unexpired.includes(:venue, :links).chronological
     return unless admin?
 
     @show_form = Admin::ShowForm.new

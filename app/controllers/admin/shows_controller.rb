@@ -42,7 +42,7 @@ class Admin::ShowsController < ApplicationController
     end
 
     def prepare_home
-      @shows = Show.unexpired.includes(:venue, :links).order(:time)
+      @shows = Show.unexpired.includes(:venue, :links).chronological
       prepare_choices
     end
 

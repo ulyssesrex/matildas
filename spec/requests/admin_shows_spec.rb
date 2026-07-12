@@ -45,7 +45,8 @@ RSpec.describe "Admin shows", type: :request do
       }.to change(Show, :count).by(1).and change(Link, :count).by(2)
 
       expect(response).to redirect_to(root_path(anchor: "shows"))
-      expect(Show.last).to have_attributes(venue: venue, price: "$15", time: Time.utc(2026, 7, 10, 23, 30))
+      expect(Show.last).to have_attributes(venue: venue, price: "$15", date: Date.new(2026, 7, 10))
+      expect(Show.last.time.strftime("%H:%M")).to eq("19:30")
       expect(Show.last.links.pluck(:name)).to contain_exactly("Venue", "Tickets", "Info")
     end
 
@@ -63,10 +64,22 @@ RSpec.describe "Admin shows", type: :request do
       expect(response.body).to include("Price can&#39;t be blank")
       expect(response.body).to include("2026-07-10")
     end
+
+    it "creates a show with a TBD time" do
+      admin = User.create!(email_address: "admin@example.com", password: "password", admin: true)
+      sign_in(admin)
+
+      post admin_shows_path, params: {
+        admin_show_form: { date: "2026-07-10", time: "", price: "$15" }
+      }
+
+      expect(response).to redirect_to(root_path(anchor: "shows"))
+      expect(Show.last).to have_attributes(date: Date.new(2026, 7, 10), time: nil)
+    end
   end
 
   describe "GET /admin/shows/:id/edit" do
-    let!(:show) { Show.create!(time: Time.utc(2026, 7, 10, 23, 30), price: "$15") }
+    let!(:show) { Show.create!(date: Date.new(2026, 7, 10), time: "19:30", price: "$15") }
 
     it "redirects unauthenticated visitors to the admin login page" do
       get edit_admin_show_path(show)
@@ -103,7 +116,7 @@ RSpec.describe "Admin shows", type: :request do
   end
 
   describe "PATCH /admin/shows/:id" do
-    let!(:show) { Show.create!(time: Time.utc(2026, 7, 10, 23, 30), price: "$15") }
+    let!(:show) { Show.create!(date: Date.new(2026, 7, 10), time: "19:30", price: "$15") }
 
     it "redirects unauthenticated visitors to the admin login page" do
       patch admin_show_path(show), params: { admin_show_form: attributes_for_request }
@@ -142,8 +155,9 @@ RSpec.describe "Admin shows", type: :request do
 
       expect(response).to redirect_to(root_path)
       expect(show.reload).to have_attributes(
-        time: Time.utc(2026, 8, 13, 0, 15), price: "$20", venue: Venue.last
+        date: Date.new(2026, 8, 12), price: "$20", venue: Venue.last
       )
+      expect(show.time.strftime("%H:%M")).to eq("20:15")
       expect(show.links.pluck(:name)).to contain_exactly("Tickets")
     end
 
@@ -162,6 +176,18 @@ RSpec.describe "Admin shows", type: :request do
       expect(response.body).to include("Price can&#39;t be blank", "2026-08-12")
       expect(show.reload).to have_attributes(price: "$15", venue: venue)
       expect(show.links).to contain_exactly(link)
+    end
+
+    it "updates a show to have a TBD time" do
+      admin = User.create!(email_address: "admin@example.com", password: "password", admin: true)
+      sign_in(admin)
+
+      patch admin_show_path(show), params: {
+        admin_show_form: { date: "2026-08-12", time: "", price: "$20" }
+      }
+
+      expect(response).to redirect_to(root_path)
+      expect(show.reload).to have_attributes(date: Date.new(2026, 8, 12), time: nil, price: "$20")
     end
   end
 

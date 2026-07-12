@@ -14,7 +14,7 @@ module Admin
     attr_accessor :link_ids, :new_venue, :new_links
     attr_reader :show
 
-    validates :date, :time, :price, presence: true
+    validates :date, :price, presence: true
     validate :date_is_valid
     validate :time_is_valid
     validate :venue_choice_is_valid
@@ -38,7 +38,7 @@ module Admin
       ApplicationRecord.transaction do
         venue = existing_venue || create_new_venue
         @show ||= Show.new
-        @show.update!(time: parsed_time, price: price, venue: venue)
+        @show.update!(date: parsed_date, time: parsed_time, price: price, venue: venue)
         @show.links = existing_links
         normalized_new_links.each { |link_attributes| @show.links << Link.create!(link_attributes) }
       end
@@ -60,10 +60,9 @@ module Admin
       def attributes_from_show
         return {} unless show
 
-        eastern_time = show.time.in_time_zone("Eastern Time (US & Canada)")
         {
-          date: eastern_time.to_date.iso8601,
-          time: eastern_time.strftime("%H:%M"),
+          date: show.date&.iso8601,
+          time: show.time&.strftime("%H:%M"),
           price: show.price,
           venue_id: show.venue_id&.to_s,
           link_ids: show.link_ids.map(&:to_s)
@@ -84,11 +83,9 @@ module Admin
       end
 
       def parsed_time
-        return unless parsed_date && parsed_time_parts
+        return if time.blank? || parsed_time_parts.nil?
 
-        Time.use_zone("Eastern Time (US & Canada)") do
-          Time.zone.local(parsed_date.year, parsed_date.month, parsed_date.day, *parsed_time_parts)
-        end
+        Time.zone.local(2000, 1, 1, *parsed_time_parts)
       end
 
       def date_is_valid

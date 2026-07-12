@@ -29,7 +29,7 @@
 
         <div class="form-field">
           <%= show_fields.label :time, "Time (Eastern)" %>
-          <%= show_fields.time_field :time, required: true %>
+          <%= show_fields.time_field :time %>
           <% form.errors.full_messages_for(:time).each do |message| %><p class="field-error"><%= message %></p><% end %>
         </div>
 

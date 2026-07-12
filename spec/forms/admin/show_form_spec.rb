@@ -7,24 +7,26 @@ RSpec.describe Admin::ShowForm do
     { date: "2026-07-10", time: "19:30", price: "$15" }
   end
 
-  it "requires date, time, and price" do
+  it "requires date and price" do
     form = described_class.new
 
     expect(form).not_to be_valid
-    expect(form.errors).to include(:date, :time, :price)
+    expect(form.errors).to include(:date, :price)
+    expect(form.errors).not_to include(:time)
   end
 
-  it "persists daylight-saving Eastern input as UTC" do
+  it "persists date and local clock time independently" do
     expect { form.save }.to change(Show, :count).by(1)
 
-    expect(form.show.time).to eq(Time.utc(2026, 7, 10, 23, 30))
+    expect(form.show.date).to eq(Date.new(2026, 7, 10))
+    expect(form.show.time.strftime("%H:%M")).to eq("19:30")
   end
 
-  it "persists standard-time Eastern input as UTC" do
-    form = described_class.new(attributes.merge(date: "2026-12-10"))
+  it "saves a required date with no time" do
+    form = described_class.new(attributes.merge(time: ""))
 
     expect(form.save).to be(true)
-    expect(form.show.time).to eq(Time.utc(2026, 12, 11, 0, 30))
+    expect(form.show).to have_attributes(date: Date.new(2026, 7, 10), time: nil)
   end
 
   it "rejects invalid dates and times" do
@@ -132,7 +134,7 @@ RSpec.describe Admin::ShowForm do
     let!(:existing_link) { Link.create!(name: "Venue", url: "https://example.com/venue") }
     let!(:replacement_link) { Link.create!(name: "Details", url: "https://example.com/details") }
     let!(:show) do
-      Show.create!(time: Time.utc(2026, 7, 10, 23, 30), price: "$15", venue: venue).tap do |record|
+      Show.create!(date: Date.new(2026, 7, 10), time: "19:30", price: "$15", venue: venue).tap do |record|
         record.links = [ existing_link ]
       end
     end
@@ -156,8 +158,9 @@ RSpec.describe Admin::ShowForm do
 
       expect(form.save).to be(true)
       expect(show.reload).to have_attributes(
-        time: Time.utc(2026, 8, 13, 0, 15), price: "$20", venue: replacement_venue
+        date: Date.new(2026, 8, 12), price: "$20", venue: replacement_venue
       )
+      expect(show.time.strftime("%H:%M")).to eq("20:15")
       expect(show.links).to contain_exactly(replacement_link)
     end
 
@@ -191,9 +194,16 @@ RSpec.describe Admin::ShowForm do
 
       expect(form.save).to be(false)
       expect(show.reload).to have_attributes(
-        time: Time.utc(2026, 7, 10, 23, 30), price: "$15", venue: venue
+        date: Date.new(2026, 7, 10), price: "$15", venue: venue
       )
+      expect(show.time.strftime("%H:%M")).to eq("19:30")
       expect(show.links).to contain_exactly(existing_link)
+    end
+
+    it "prefills a TBD show with a blank time" do
+      show.update!(time: nil)
+
+      expect(described_class.new(show: show)).to have_attributes(date: "2026-07-10", time: nil)
     end
   end
 end

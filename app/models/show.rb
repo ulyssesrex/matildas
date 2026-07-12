@@ -3,5 +3,6 @@ class Show < ApplicationRecord
 
   has_and_belongs_to_many :links
 
-  scope :unexpired, -> { where("time > ?", 2.weeks.ago) }
+  scope :unexpired, -> { where(date: 2.weeks.ago.to_date..) }
+  scope :chronological, -> { order(:date, Arel.sql("time IS NULL"), :time) }
 end
