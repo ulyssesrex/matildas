@@ -97,7 +97,10 @@ RSpec.describe "pages/home.html.erb", type: :view do
     artist_field = document.at_css('[data-controller="artist-select"]')
     artist_select = artist_field.at_css('select[name="admin_show_form[link_ids][]"]')
 
-    expect(artist_field.at_css('input[type="search"][data-artist-select-target="search"]')).to be_present
+    search_input = artist_field.at_css('input[type="search"][data-artist-select-target="search"]')
+    expect(search_input).to be_present
+    expect(search_input["aria-label"]).to eq("Search artists")
+    expect(artist_field.at_css('label[for="artist_search"]')).not_to be_present
     expect(artist_field.at_css('[data-action="input->artist-select#filter"]')).to be_present
     expect(artist_select).to have_attribute("multiple")
     expect(artist_select["data-artist-select-target"]).to eq("select")

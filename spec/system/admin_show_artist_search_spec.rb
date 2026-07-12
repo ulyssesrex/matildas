@@ -15,8 +15,9 @@ RSpec.describe "Admin show artist search", type: :system do
   end
 
   it "filters unselected artists while keeping selections visible" do
+    search_input = find('input[aria-label="Search artists"]')
     select "Alpha Artist", from: "With artists"
-    fill_in "Search artists", with: "beta"
+    search_input.fill_in(with: "beta")
 
     alpha = find('#admin_show_form_link_ids option[value]', text: "Alpha Artist", visible: :all)
     beta = find('#admin_show_form_link_ids option[value]', text: "Beta Band", visible: :all)
@@ -25,12 +26,12 @@ RSpec.describe "Admin show artist search", type: :system do
     expect(page.evaluate_script("arguments[0].hidden", alpha.native)).to be(false)
     expect(page.evaluate_script("arguments[0].hidden", beta.native)).to be(false)
 
-    fill_in "Search artists", with: "missing"
+    search_input.fill_in(with: "missing")
 
     expect(page.evaluate_script("arguments[0].hidden", alpha.native)).to be(false)
     expect(page.evaluate_script("arguments[0].hidden", beta.native)).to be(true)
 
-    fill_in "Search artists", with: ""
+    search_input.fill_in(with: "")
 
     expect(page.evaluate_script("arguments[0].hidden", beta.native)).to be(false)
   end

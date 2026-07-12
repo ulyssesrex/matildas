@@ -69,9 +69,9 @@
         <div class="form-field" data-controller="artist-select">
           <% if links.any? %>
             <%= label_tag :admin_show_form_link_ids, "With artists", class: "form-label" %>
-            <%= label_tag :artist_search, "Search artists" %>
             <%= search_field_tag :artist_search, nil,
                   autocomplete: "off",
+                  aria: { label: "Search artists" },
                   data: {
                     action: "input->artist-select#filter",
                     artist_select_target: "search"
