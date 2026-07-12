@@ -11,7 +11,7 @@ Clarify the artist choices in the shared admin new/edit show form and make exist
 - Add a `Search artists` input immediately above the multiselect. A small Stimulus controller filters the displayed options by artist name as the administrator types.
 - Keep selected artists selected and visible when filtering, so a search cannot hide selections or accidentally remove them.
 - Preserve the current `admin_show_form[link_ids][]` parameter shape, including the selections shown when editing a show or redisplaying an invalid submission.
-- Label the artist-creation section `or new artist(s)`.
+- Label the artist-creation section `Or Create An Artist`, matching the venue section's `Or Create A Venue` pattern.
 - When there are no existing artists, retain a short empty-state message instead of rendering the search control and multiselect.
 
 The shared partial supplies both the new and edit forms, so the same behavior and wording will apply to both pages.
