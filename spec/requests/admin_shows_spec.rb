@@ -35,7 +35,7 @@ RSpec.describe "Admin shows", type: :request do
         post admin_shows_path, params: {
           admin_show_form: {
             date: "2026-07-10", time: "19:30", price: "$15", venue_id: venue.id,
-            link_ids: [existing_link.id],
+            link_ids: [ existing_link.id ],
             new_links: {
               "0" => { name: "Tickets", url: "https://example.com/tickets" },
               "1" => { name: "Info", url: "https://example.com/info" }

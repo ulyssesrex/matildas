@@ -42,14 +42,14 @@ RSpec.describe "pages/home.html.erb", type: :view do
       Link.new(name: "Details", url: "https://example.com/details")
     ]
 
-    assign(:shows, [show])
+    assign(:shows, [ show ])
     render template: "pages/home"
     row = Nokogiri::HTML.fragment(rendered).css(".shows-table tr").first
 
     expect(row.at_css('a[href="https://maps.example/union"]')&.text).to eq("Union Hall")
-    expect(row.css("td").last.css("a").map { |anchor| [anchor.text, anchor["href"]] }).to eq([
-      ["Tickets", "https://example.com/tickets"],
-      ["Details", "https://example.com/details"]
+    expect(row.css("td").last.css("a").map { |anchor| [ anchor.text, anchor["href"] ] }).to eq([
+      [ "Tickets", "https://example.com/tickets" ],
+      [ "Details", "https://example.com/details" ]
     ])
   end
 
@@ -57,7 +57,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
     venue = Venue.new(name: "Union Hall", city: "Brooklyn", state: "NY")
     show = Show.new(date: Date.new(2026, 7, 10), time: "19:30", price: "$15", venue: venue)
 
-    assign(:shows, [show])
+    assign(:shows, [ show ])
     render template: "pages/home"
     row = Nokogiri::HTML.fragment(rendered).css(".shows-table tr").first
 
@@ -70,8 +70,8 @@ RSpec.describe "pages/home.html.erb", type: :view do
     allow(view).to receive(:admin?).and_return(true)
     assign(:shows, [])
     assign(:show_form, Admin::ShowForm.new)
-    assign(:venues, [Venue.new(id: 1, name: "Union Hall", city: "Brooklyn", state: "NY")])
-    assign(:links, [Link.new(id: 1, name: "Tickets")])
+    assign(:venues, [ Venue.new(id: 1, name: "Union Hall", city: "Brooklyn", state: "NY") ])
+    assign(:links, [ Link.new(id: 1, name: "Tickets") ])
 
     render template: "pages/home"
 
@@ -111,7 +111,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
 
   it "renders TBD when a show has no time" do
     show = Show.new(date: Date.new(2026, 7, 10), time: nil, price: "$15")
-    assign(:shows, [show])
+    assign(:shows, [ show ])
 
     render template: "pages/home"
 

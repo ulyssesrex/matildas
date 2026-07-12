@@ -24,7 +24,7 @@ RSpec.describe "Show", type: :model do
       early = Show.create!(date: Date.new(2026, 7, 10), time: "19:00", price: "$15")
       next_day = Show.create!(date: Date.new(2026, 7, 11), time: "18:00", price: "$15")
 
-      expect(Show.chronological).to eq([early, late, tbd, next_day])
+      expect(Show.chronological).to eq([ early, late, tbd, next_day ])
     end
   end
 end

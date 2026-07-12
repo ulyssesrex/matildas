@@ -81,7 +81,7 @@ RSpec.describe Admin::ShowForm do
   it "combines unique existing links with multiple new links" do
     existing = Link.create!(name: "Venue", url: "https://example.com/venue")
     form = described_class.new(attributes.merge(
-      link_ids: ["", existing.id.to_s, existing.id.to_s],
+      link_ids: [ "", existing.id.to_s, existing.id.to_s ],
       new_links: {
         "0" => { name: "Tickets", url: "https://example.com/tickets" },
         "1" => { name: "Info", url: "https://example.com/info" },
@@ -101,7 +101,7 @@ RSpec.describe Admin::ShowForm do
   end
 
   it "rejects unknown existing link ids" do
-    form = described_class.new(attributes.merge(link_ids: ["999999"]))
+    form = described_class.new(attributes.merge(link_ids: [ "999999" ]))
 
     expect(form).not_to be_valid
     expect(form.errors[:link_ids]).to include("contain an invalid Link")
@@ -114,7 +114,7 @@ RSpec.describe Admin::ShowForm do
       new_links: { "0" => { name: "Tickets", url: "https://example.com/tickets" } }
     ))
 
-    expect { form.save }.not_to change { [Show.count, Venue.count, Link.count] }
+    expect { form.save }.not_to change { [ Show.count, Venue.count, Link.count ] }
     expect(form.errors[:base]).to be_present
   end
 
