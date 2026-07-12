@@ -1,6 +1,12 @@
 require "rails_helper"
 
 RSpec.describe "Show", type: :model do
+  it "defaults new persisted shows to active with no cancellation notes" do
+    show = Show.create!(date: Date.new(2026, 7, 10), price: "$15")
+
+    expect(show).to have_attributes(cancelled: false, cancellation_notes: nil)
+  end
+
   describe "unexpired scope" do
     it "uses the show date, including when time is absent" do
       freeze_time do
