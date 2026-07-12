@@ -84,6 +84,31 @@ RSpec.describe "pages/home.html.erb", type: :view do
     expect(rendered).to include('data-action="link-rows#add"')
     expect(rendered).to include('data-action="link-rows#remove"')
     expect(rendered).to include("Create Show")
+
+    form = Nokogiri::HTML.fragment(rendered).at_css('[data-controller="show-cancellation"]')
+    expect(form).to be_present
+    expect(form.at_css('[data-show-cancellation-target="checkbox"]')).not_to have_attribute("checked")
+    expect(form.at_css('[data-show-cancellation-target="ordinaryNotes"]')).not_to have_attribute("hidden")
+    expect(form.at_css('[data-show-cancellation-target="cancellationNotes"]')).to have_attribute("hidden")
+  end
+
+  it "shows cancellation notes and preserves ordinary notes in a cancelled admin form" do
+    allow(view).to receive(:admin?).and_return(true)
+    assign(:shows, [])
+    assign(:show_form, Admin::ShowForm.new(
+      cancelled: true, notes: "Doors at 7", cancellation_notes: "Venue closed"
+    ))
+    assign(:venues, [])
+    assign(:links, [])
+
+    render template: "pages/home"
+
+    form = Nokogiri::HTML.fragment(rendered).at_css('[data-controller="show-cancellation"]')
+    expect(form.at_css('[data-show-cancellation-target="checkbox"]')).to have_attribute("checked")
+    expect(form.at_css('[data-show-cancellation-target="ordinaryNotes"]')).to have_attribute("hidden")
+    expect(form.at_css('[data-show-cancellation-target="ordinaryNotes"] textarea').text.strip).to eq("Doors at 7")
+    expect(form.at_css('[data-show-cancellation-target="cancellationNotes"]')).not_to have_attribute("hidden")
+    expect(form.at_css('[data-show-cancellation-target="cancellationNotes"] textarea').text.strip).to eq("Venue closed")
   end
 
   it "does not render an Edit column for non-admins" do

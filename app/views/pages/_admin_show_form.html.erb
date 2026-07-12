@@ -39,6 +39,33 @@
           <% form.errors.full_messages_for(:price).each do |message| %><p class="field-error"><%= message %></p><% end %>
         </div>
 
+        <div data-controller="show-cancellation">
+          <div class="form-field">
+            <label>
+              <%= show_fields.check_box :cancelled,
+                    data: {
+                      action: "show-cancellation#toggle",
+                      show_cancellation_target: "checkbox"
+                    } %>
+              Cancelled
+            </label>
+          </div>
+
+          <div class="form-field"
+               data-show-cancellation-target="ordinaryNotes"
+               <%= "hidden" if form.cancelled %>>
+            <%= show_fields.label :notes, "Notes" %>
+            <%= show_fields.text_area :notes %>
+          </div>
+
+          <div class="form-field"
+               data-show-cancellation-target="cancellationNotes"
+               <%= "hidden" unless form.cancelled %>>
+            <%= show_fields.label :cancellation_notes, "Cancellation notes" %>
+            <%= show_fields.text_area :cancellation_notes %>
+          </div>
+        </div>
+
         <div class="form-field">
           <span class="form-label">Existing Links</span>
           <% if links.any? %>
