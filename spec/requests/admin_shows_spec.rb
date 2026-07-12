@@ -115,7 +115,8 @@ RSpec.describe "Admin shows", type: :request do
       expect(response.body).to include("Edit Show", "2026-07-10", "19:30", "$15")
       expect(response.body).to include('name="_method" value="patch"')
       expect(document.at_css("option[value='#{venue.id}'][selected]")&.text).to eq("Union Hall")
-      expect(document.at_css("input[value='#{link.id}'][checked]")).to be_present
+      artist_select = document.at_css('select[name="admin_show_form[link_ids][]"][multiple]')
+      expect(artist_select.at_css("option[value='#{link.id}'][selected]")&.text).to eq("Tickets")
     end
   end
 

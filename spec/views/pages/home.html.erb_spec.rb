@@ -85,12 +85,24 @@ RSpec.describe "pages/home.html.erb", type: :view do
     expect(rendered).to include("City", "State", "Map URL", "Name")
     expect(rendered).to include("Tickets")
     expect(rendered).to include("Show details and Artists")
-    expect(rendered).to include("Existing Artists", "New Artists", "Add another Artist")
+    expect(rendered).to include("With artists", "Or Create An Artist", "Add another Artist")
+    expect(rendered).not_to include("Existing Artists", "New Artists")
     expect(rendered).not_to include("Existing Links", "New Links", "Add another Link")
     expect(rendered).to include('data-controller="link-rows"')
     expect(rendered).to include('data-action="link-rows#add"')
     expect(rendered).to include('data-action="link-rows#remove"')
     expect(rendered).to include("Create Show")
+
+    document = Nokogiri::HTML.fragment(rendered)
+    artist_field = document.at_css('[data-controller="artist-select"]')
+    artist_select = artist_field.at_css('select[name="admin_show_form[link_ids][]"]')
+
+    expect(artist_field.at_css('input[type="search"][data-artist-select-target="search"]')).to be_present
+    expect(artist_field.at_css('[data-action="input->artist-select#filter"]')).to be_present
+    expect(artist_select).to have_attribute("multiple")
+    expect(artist_select["data-artist-select-target"]).to eq("select")
+    expect(artist_select.css("option").map(&:text)).to eq([ "Tickets" ])
+    expect(artist_field.css('input[type="checkbox"][name="admin_show_form[link_ids][]"]')).to be_empty
 
     form = Nokogiri::HTML.fragment(rendered).at_css('[data-controller="show-cancellation"]')
     expect(form).to be_present
