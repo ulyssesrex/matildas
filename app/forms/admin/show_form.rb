@@ -163,7 +163,7 @@ module Admin
 
       def normalized_new_links
         submitted_new_links.filter_map do |row|
-          row.symbolize_keys if row.values.any?(&:present?)
+          row.symbolize_keys.merge(artist: true) if row.values.any?(&:present?)
         end
       end
 

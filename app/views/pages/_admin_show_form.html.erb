@@ -19,7 +19,7 @@
   <%= form_with model: form, url: form_url, method: form_method, class: "admin-show-form__form" do |show_fields| %>
     <div class="admin-show-form__panels">
       <fieldset class="admin-show-form__panel">
-        <legend>Show details and Links</legend>
+        <legend>Show details and Artists</legend>
 
         <div class="form-field">
           <%= show_fields.label :date, "Date" %>
@@ -67,7 +67,7 @@
         </div>
 
         <div class="form-field">
-          <span class="form-label">Existing Links</span>
+          <span class="form-label">Existing Artists</span>
           <% if links.any? %>
             <div class="form-checkboxes">
               <% links.each do |link| %>
@@ -79,13 +79,13 @@
               <% end %>
             </div>
           <% else %>
-            <p class="form-hint">No existing Links.</p>
+            <p class="form-hint">No existing Artists.</p>
           <% end %>
           <% form.errors.full_messages_for(:link_ids).each do |message| %><p class="field-error"><%= message %></p><% end %>
         </div>
 
         <div class="form-field" data-controller="link-rows">
-          <span class="form-label">New Links</span>
+          <span class="form-label">New Artists</span>
           <div class="new-link-rows" data-link-rows-target="rows">
             <% form.submitted_new_links.each_with_index do |link, index| %>
               <div class="new-link-row" data-link-row>
@@ -102,7 +102,7 @@
             <% end %>
           </div>
           <% form.errors.full_messages_for(:new_links).each do |message| %><p class="field-error"><%= message %></p><% end %>
-          <button type="button" class="form-button form-button--secondary" data-action="link-rows#add">Add another Link</button>
+          <button type="button" class="form-button form-button--secondary" data-action="link-rows#add">Add another Artist</button>
 
           <template data-link-rows-target="template">
             <div class="new-link-row" data-link-row>

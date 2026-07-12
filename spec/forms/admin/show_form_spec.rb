@@ -109,6 +109,8 @@ RSpec.describe Admin::ShowForm do
 
     expect { form.save }.to change(Link, :count).by(2)
     expect(form.show.links.pluck(:name)).to contain_exactly("Venue", "Tickets", "Info")
+    expect(form.show.links.where(name: [ "Tickets", "Info" ])).to all(be_artist)
+    expect(existing.reload).not_to be_artist
   end
 
   it "requires both fields in a started new link row" do
@@ -198,6 +200,7 @@ RSpec.describe Admin::ShowForm do
       expect { form.save }.to change(Venue, :count).by(1).and change(Link, :count).by(1)
       expect(show.reload.venue.name).to eq("Elsewhere")
       expect(show.links.pluck(:name)).to contain_exactly("Tickets")
+      expect(show.links.first).to be_artist
     end
 
     it "rolls back show updates when an associated record fails" do
