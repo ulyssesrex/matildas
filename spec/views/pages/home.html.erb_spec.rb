@@ -32,26 +32,30 @@ RSpec.describe "pages/home.html.erb", type: :view do
     expect(rendered).to include("$15")
   end
 
-  it "links a venue with a map URL and renders all Show links in the links cell" do
+  it "links the venue and renders only artists as a prefixed comma-separated list" do
     venue = Venue.new(
       name: "Union Hall", city: "Brooklyn", state: "NY",
       map_url: "https://maps.example/union"
     )
     show = Show.new(date: Date.new(2026, 7, 10), time: "19:30", price: "$15", venue: venue)
     show.links = [
-      Link.new(name: "Tickets", url: "https://example.com/tickets"),
-      Link.new(name: "Details", url: "https://example.com/details")
+      Link.new(name: "Artist One", url: "https://example.com/one", artist: true),
+      Link.new(name: "Tickets", url: "https://example.com/tickets", artist: false),
+      Link.new(name: "Artist Two", url: "https://example.com/two", artist: true)
     ]
 
     assign(:shows, [ show ])
     render template: "pages/home"
     row = Nokogiri::HTML.fragment(rendered).css(".shows-table tr").first
+    artists = row.at_css(".shows-table__artists")
 
     expect(row.at_css('a[href="https://maps.example/union"]')&.text).to eq("Union Hall")
-    expect(row.at_css(".shows-table__links").css("a").map { |anchor| [ anchor.text, anchor["href"] ] }).to eq([
-      [ "Tickets", "https://example.com/tickets" ],
-      [ "Details", "https://example.com/details" ]
+    expect(artists.text.squish).to eq("w/ Artist One, Artist Two")
+    expect(artists.css("a").map { |anchor| [ anchor.text, anchor["href"] ] }).to eq([
+      [ "Artist One", "https://example.com/one" ],
+      [ "Artist Two", "https://example.com/two" ]
     ])
+    expect(row).not_to have_link("Tickets")
   end
 
   it "keeps an unlinked venue name and an empty final cell when no URLs exist" do
@@ -64,7 +68,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
 
     expect(row.text).to include("Union Hall")
     expect(row.css("a")).to be_empty
-    expect(row.css("td").last.text.strip).to be_empty
+    expect(row.at_css(".shows-table__artists").text.strip).to be_empty
   end
 
   it "renders the two-panel show form for an admin" do
