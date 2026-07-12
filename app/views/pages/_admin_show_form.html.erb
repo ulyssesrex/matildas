@@ -128,10 +128,26 @@
       <fieldset class="admin-show-form__panel">
         <legend>Venue</legend>
 
-        <div class="form-field">
-          <%= show_fields.label :venue_id, "Existing venue" %>
-          <%= show_fields.collection_select :venue_id, venues, :id, :name,
-                { include_blank: "Choose an existing Venue" } %>
+        <div class="form-field" data-controller="artist-select">
+          <%= show_fields.label :venue_id, "Existing Venue" %>
+          <%= search_field_tag :venue_search, nil,
+                autocomplete: "off",
+                aria: { label: "Search venues" },
+                data: {
+                  action: "input->artist-select#filter",
+                  artist_select_target: "search"
+                } %>
+          <% venue_options = venues.map do |venue| %>
+            <% location = [ venue.city, venue.state ].compact_blank.join(", ") %>
+            <% [ location.present? ? "#{venue.name} (#{location})" : venue.name, venue.id ] %>
+          <% end %>
+          <%= show_fields.select :venue_id,
+                options_for_select(venue_options, form.venue_id),
+                { include_blank: "Choose an existing Venue" },
+                {
+                  size: [ [ venues.size, 4 ].max, 8 ].min,
+                  data: { artist_select_target: "select" }
+                } %>
           <% form.errors.full_messages_for(:venue_id).each do |message| %><p class="field-error"><%= message %></p><% end %>
           <% form.errors.full_messages_for(:venue).each do |message| %><p class="field-error"><%= message %></p><% end %>
         </div>

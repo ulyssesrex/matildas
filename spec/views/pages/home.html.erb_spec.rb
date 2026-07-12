@@ -81,7 +81,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
     render template: "pages/home"
 
     expect(rendered).to include('class="admin-show-form__panels"')
-    expect(rendered).to include("Date", "Time", "Price", "Existing venue")
+    expect(rendered).to include("Date", "Time", "Price", "Existing Venue")
     expect(rendered).to include("City", "State", "Map URL", "Name")
     expect(rendered).to include("Tickets")
     expect(rendered).to include("Show details and Artists")
@@ -106,6 +106,19 @@ RSpec.describe "pages/home.html.erb", type: :view do
     expect(artist_select["data-artist-select-target"]).to eq("select")
     expect(artist_select.css("option").map(&:text)).to eq([ "Tickets" ])
     expect(artist_field.css('input[type="checkbox"][name="admin_show_form[link_ids][]"]')).to be_empty
+
+    venue_field = document.at_css('[data-controller="artist-select"]:has(select[name="admin_show_form[venue_id]"])')
+    venue_select = venue_field.at_css('select[name="admin_show_form[venue_id]"]')
+
+    venue_search = venue_field.at_css('input[type="search"][data-artist-select-target="search"]')
+    expect(venue_search).to be_present
+    expect(venue_search["aria-label"]).to eq("Search venues")
+    expect(venue_field.at_css('label[for="venue_search"]')).not_to be_present
+    expect(venue_field.at_css('[data-action="input->artist-select#filter"]')).to be_present
+    expect(venue_select).not_to have_attribute("multiple")
+    expect(venue_select["data-artist-select-target"]).to eq("select")
+    expect(venue_select.css("option").map(&:text)).to include("Union Hall (Brooklyn, NY)")
+    expect(venue_select.at_css('option[value="1"]')&.text).to eq("Union Hall (Brooklyn, NY)")
 
     form = Nokogiri::HTML.fragment(rendered).at_css('[data-controller="show-cancellation"]')
     expect(form).to be_present
