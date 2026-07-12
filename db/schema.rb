@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_12_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_12_130000) do
   create_table "links", force: :cascade do |t|
+    t.boolean "artist", default: false, null: false
     t.datetime "created_at", null: false
     t.string "name"
     t.datetime "updated_at", null: false
