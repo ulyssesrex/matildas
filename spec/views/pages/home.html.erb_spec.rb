@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "pages/home.html.erb", type: :view do
   before do
+    view.define_singleton_method(:admin?) { false }
     allow(view).to receive(:admin?).and_return(false)
   end
 
