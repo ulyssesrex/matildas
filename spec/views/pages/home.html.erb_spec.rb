@@ -32,7 +32,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
     expect(rendered).to include("$15")
   end
 
-  it "links a venue with a map URL and renders all Show links in the final cell" do
+  it "links a venue with a map URL and renders all Show links in the links cell" do
     venue = Venue.new(
       name: "Union Hall", city: "Brooklyn", state: "NY",
       map_url: "https://maps.example/union"
@@ -48,7 +48,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
     row = Nokogiri::HTML.fragment(rendered).css(".shows-table tr").first
 
     expect(row.at_css('a[href="https://maps.example/union"]')&.text).to eq("Union Hall")
-    expect(row.css("td").last.css("a").map { |anchor| [ anchor.text, anchor["href"] ] }).to eq([
+    expect(row.at_css(".shows-table__links").css("a").map { |anchor| [ anchor.text, anchor["href"] ] }).to eq([
       [ "Tickets", "https://example.com/tickets" ],
       [ "Details", "https://example.com/details" ]
     ])
@@ -144,5 +144,34 @@ RSpec.describe "pages/home.html.erb", type: :view do
     row = Nokogiri::HTML.fragment(rendered).at_css(".shows-table tr")
     expect(row.css("td")[0].text).to include("July 10, 2026")
     expect(row.css("td")[1].text.strip).to eq("TBD")
+  end
+
+  it "renders ordinary notes for an active show" do
+    show = Show.new(
+      date: Date.new(2026, 7, 10), time: "19:30", price: "$15", notes: "Doors at 7"
+    )
+    assign(:shows, [ show ])
+
+    render template: "pages/home"
+
+    row = Nokogiri::HTML.fragment(rendered).at_css(".shows-table tr")
+    expect(row.css("td")[1].text.strip).to eq("7:30 PM")
+    expect(row.at_css(".shows-table__notes").text.strip).to eq("Doors at 7")
+  end
+
+  it "renders a cancelled show in red with cancellation time and notes" do
+    show = Show.new(
+      date: Date.new(2026, 7, 10), time: "19:30", price: "$15",
+      cancelled: true, notes: "Doors at 7", cancellation_notes: "Venue closed"
+    )
+    assign(:shows, [ show ])
+
+    render template: "pages/home"
+
+    row = Nokogiri::HTML.fragment(rendered).at_css(".shows-table tr")
+    expect(row["class"]).to include("shows-table__row--cancelled")
+    expect(row.css("td")[1].text.strip).to eq("SHOW CANCELLED")
+    expect(row.at_css(".shows-table__notes").text.strip).to eq("Venue closed")
+    expect(row.text).not_to include("Doors at 7")
   end
 end

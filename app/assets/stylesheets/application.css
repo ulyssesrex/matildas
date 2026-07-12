@@ -11,6 +11,7 @@
 
 :root {
   --color-black: #000;
+  --color-red: #f33;
   --color-white: #fff;
   --site-nav-height: 4.5rem;
 }
@@ -103,6 +104,11 @@ a {
   border: 1px solid var(--color-white);
   padding: 0.75rem;
   text-align: left;
+}
+
+.shows-table__row--cancelled,
+.shows-table__row--cancelled a {
+  color: var(--color-red);
 }
 
 .flash {

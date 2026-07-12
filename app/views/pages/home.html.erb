@@ -23,9 +23,9 @@
       <table class="shows-table">
         <tbody>
           <% @shows.each do |show| %>
-            <tr>
+            <tr class="<%= "shows-table__row--cancelled" if show.cancelled? %>">
               <td><%= show.date.strftime("%B %-d, %Y") %></td>
-              <td><%= show.time&.strftime("%-l:%M %p") || "TBD" %></td>
+              <td><%= show.cancelled? ? "SHOW CANCELLED" : (show.time&.strftime("%-l:%M %p") || "TBD") %></td>
               <td>
                 <% if show.venue&.map_url.present? %>
                   <%= link_to show.venue.name, show.venue.map_url %>
@@ -40,6 +40,7 @@
                   <%= link_to link.name, link.url %>
                 <% end %>
               </td>
+              <td class="shows-table__notes"><%= show.cancelled? ? show.cancellation_notes : show.notes %></td>
               <% if admin? %>
                 <td class="shows-table__edit">
                   <%= link_to "Edit", edit_admin_show_path(show), class: "form-button form-button--secondary" %>
