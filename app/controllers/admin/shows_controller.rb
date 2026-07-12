@@ -34,7 +34,7 @@ class Admin::ShowsController < ApplicationController
 
     def show_form_params
       params.require(:admin_show_form).permit(
-        :date, :time, :price, :venue_id,
+        :date, :time, :price, :venue_id, :cancelled, :notes, :cancellation_notes,
         link_ids: [],
         new_venue: [ :name, :city, :state, :map_url ],
         new_links: [ :name, :url ]

@@ -35,6 +35,7 @@ RSpec.describe "Admin shows", type: :request do
         post admin_shows_path, params: {
           admin_show_form: {
             date: "2026-07-10", time: "19:30", price: "$15", venue_id: venue.id,
+            cancelled: "1", notes: "Doors at 7", cancellation_notes: "Venue closed",
             link_ids: [ existing_link.id ],
             new_links: {
               "0" => { name: "Tickets", url: "https://example.com/tickets" },
@@ -45,7 +46,10 @@ RSpec.describe "Admin shows", type: :request do
       }.to change(Show, :count).by(1).and change(Link, :count).by(2)
 
       expect(response).to redirect_to(root_path(anchor: "shows"))
-      expect(Show.last).to have_attributes(venue: venue, price: "$15", date: Date.new(2026, 7, 10))
+      expect(Show.last).to have_attributes(
+        venue: venue, price: "$15", date: Date.new(2026, 7, 10),
+        cancelled: true, notes: "Doors at 7", cancellation_notes: "Venue closed"
+      )
       expect(Show.last.time.strftime("%H:%M")).to eq("19:30")
       expect(Show.last.links.pluck(:name)).to contain_exactly("Venue", "Tickets", "Info")
     end
@@ -142,6 +146,7 @@ RSpec.describe "Admin shows", type: :request do
         patch admin_show_path(show), params: {
           admin_show_form: {
             date: "2026-08-12", time: "20:15", price: "$20",
+            cancelled: "1", notes: "Doors at 7", cancellation_notes: "Venue closed",
             new_venue: {
               name: "Elsewhere", city: "Brooklyn", state: "NY",
               map_url: "https://maps.example/elsewhere"
@@ -155,7 +160,8 @@ RSpec.describe "Admin shows", type: :request do
 
       expect(response).to redirect_to(root_path)
       expect(show.reload).to have_attributes(
-        date: Date.new(2026, 8, 12), price: "$20", venue: Venue.last
+        date: Date.new(2026, 8, 12), price: "$20", venue: Venue.last,
+        cancelled: true, notes: "Doors at 7", cancellation_notes: "Venue closed"
       )
       expect(show.time.strftime("%H:%M")).to eq("20:15")
       expect(show.links.pluck(:name)).to contain_exactly("Tickets")
