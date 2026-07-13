@@ -280,6 +280,10 @@ input[type="submit"] {
 }
 
 @media (max-width: 38rem) {
+  :root {
+    --site-nav-height: calc(5.5rem + 1px);
+  }
+
   .site-nav {
     justify-content: flex-start;
   }
