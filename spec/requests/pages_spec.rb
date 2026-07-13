@@ -38,6 +38,40 @@ RSpec.describe "Pages", type: :request do
       expect(music_section.previous_element).to eq(image)
     end
 
+    it "renders the Bandcamp players below Music in album order" do
+      get root_path
+
+      document = Nokogiri::HTML(response.body)
+      music_section = document.at_css("main#top > section#music")
+      heading = music_section.at_css("h2")
+      player_container = music_section.at_css(".bandcamp-players")
+      players = player_container.element_children.select do |element|
+        element.name == "iframe" && element["class"].split.include?("bandcamp-embed")
+      end
+
+      expect(heading.text).to eq("Music")
+      expect(heading.next_element).to eq(player_container)
+      expect(players.map { |player| player["src"] }).to eq([
+        "https://bandcamp.com/EmbeddedPlayer/album=3770867506/size=large/bgcol=ffffff/linkcol=333333/tracklist=false/artwork=small/transparent=true/",
+        "https://bandcamp.com/EmbeddedPlayer/album=1816368499/size=large/bgcol=ffffff/linkcol=333333/tracklist=false/artwork=small/transparent=true/",
+        "https://bandcamp.com/EmbeddedPlayer/album=3392802803/size=large/bgcol=ffffff/linkcol=333333/tracklist=false/artwork=small/transparent=true/",
+        "https://bandcamp.com/EmbeddedPlayer/album=3200630352/size=large/bgcol=ffffff/linkcol=333333/tracklist=false/artwork=small/transparent=true/"
+      ])
+      expect(players.map { |player| player["title"] }).to eq([
+        "Bandcamp player for Magic Mirror EP by The Matildas",
+        "Bandcamp player for Dark Corners EP by The Matildas",
+        "Bandcamp player for Ample Shortage (Demo) by The Matildas",
+        "Bandcamp player for Noise That Works (Demo) by The Matildas"
+      ])
+      expect(players.map { |player| player["loading"] }).to all(eq("lazy"))
+      expect(response.body).to include(
+        'href="https://matildas.bandcamp.com/album/magic-mirror-ep"',
+        'href="https://matildas.bandcamp.com/album/dark-corners-ep"',
+        'href="https://matildas.bandcamp.com/album/ample-shortage-demo"',
+        'href="https://matildas.bandcamp.com/album/noise-that-works-demo"'
+      )
+    end
+
     it "renders navigation links to each home page section" do
       get root_path
 
