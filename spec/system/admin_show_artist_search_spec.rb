@@ -5,8 +5,8 @@ RSpec.describe "Admin show artist search", type: :system do
     driven_by :selenium, using: :headless_chrome, screen_size: [ 1200, 900 ]
 
     User.create!(email_address: "admin@example.com", password: "password", admin: true)
-    Link.create!(name: "Alpha Artist", url: "https://example.com/alpha", artist: true)
-    Link.create!(name: "Beta Band", url: "https://example.com/beta", artist: true)
+    Artist.create!(name: "Alpha Artist", url: "https://example.com/alpha")
+    Artist.create!(name: "Beta Band", url: "https://example.com/beta")
 
     visit new_admin_session_path
     fill_in "Admin Email", with: "admin@example.com"
@@ -19,8 +19,8 @@ RSpec.describe "Admin show artist search", type: :system do
     select "Alpha Artist", from: "With artists"
     search_input.fill_in(with: "beta")
 
-    alpha = find('#admin_show_form_link_ids option[value]', text: "Alpha Artist", visible: :all)
-    beta = find('#admin_show_form_link_ids option[value]', text: "Beta Band", visible: :all)
+    alpha = find('#admin_show_form_artist_ids option[value]', text: "Alpha Artist", visible: :all)
+    beta = find('#admin_show_form_artist_ids option[value]', text: "Beta Band", visible: :all)
 
     expect(alpha).to be_selected
     expect(page.evaluate_script("arguments[0].hidden", alpha.native)).to be(false)

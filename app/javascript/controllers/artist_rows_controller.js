@@ -13,6 +13,6 @@ export default class extends Controller {
   }
 
   remove(event) {
-    event.currentTarget.closest("[data-link-row]").remove()
+    event.currentTarget.closest("[data-artist-row]").remove()
   }
 }
