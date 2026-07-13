@@ -9,6 +9,21 @@ RSpec.describe "Application stylesheet" do
     expect(stylesheet).to match(/\.site-nav__link\s*\{[^}]*font-size:\s*var\(--body-heading-font-size\);/m)
   end
 
+  it "preserves editable text casing while keeping selections and actions uppercase" do
+    expect(stylesheet).to match(
+      /input,\s*textarea\s*\{[^}]*text-transform:\s*none;/m
+    )
+    expect(stylesheet).not_to match(
+      /\.form-field input\[type="date"\],[^{]*\{[^}]*text-transform:\s*uppercase;/m
+    )
+    expect(stylesheet).not_to match(
+      /select[^{]*\{[^}]*text-transform:\s*none;/m
+    )
+    expect(stylesheet).to match(
+      /\.form-button,\s*input\[type="submit"\]\s*\{[^}]*text-transform:\s*uppercase;/m
+    )
+  end
+
   it "draws a full-height separator before the navigation link group" do
     expect(stylesheet).to match(
       /\.site-nav__links\s*\{[^}]*border-left:\s*1px solid var\(--color-white\);/m
