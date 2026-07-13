@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   # config/routes.rb
   namespace :admin do
+    root to: "sessions#new"
     resource :session, only: [ :new, :create, :destroy ]
     resources :shows, only: [ :create, :edit, :update ]
   end
