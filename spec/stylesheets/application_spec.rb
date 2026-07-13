@@ -9,9 +9,18 @@ RSpec.describe "Application stylesheet" do
     expect(stylesheet).to match(/\.site-nav__link\s*\{[^}]*font-size:\s*var\(--body-heading-font-size\);/m)
   end
 
-  it "uses the intrinsic navigation height as the mobile scroll offset" do
+  it "draws a full-height separator before the navigation link group" do
     expect(stylesheet).to match(
-      /@media \(max-width: 38rem\)\s*\{.*?:root\s*\{[^}]*--site-nav-height:\s*calc\(5\.5rem \+ 1px\);/m
+      /\.site-nav__links\s*\{[^}]*border-left:\s*1px solid var\(--color-white\);/m
+    )
+  end
+
+  it "uses a full-width separator and accurate scroll offset for the stacked navigation" do
+    expect(stylesheet).to match(
+      /@media \(max-width: 38rem\)\s*\{.*?:root\s*\{[^}]*--site-nav-height:\s*calc\(5\.5rem \+ 2px\);/m
+    )
+    expect(stylesheet).to match(
+      /@media \(max-width: 38rem\)\s*\{.*?\.site-nav__links\s*\{[^}]*border-left:\s*0;[^}]*border-top:\s*1px solid var\(--color-white\);/m
     )
   end
 end

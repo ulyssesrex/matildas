@@ -18,6 +18,9 @@ RSpec.describe "Pages", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('<nav class="site-nav" aria-label="Primary navigation">')
       expect(response.body).to include('<a class="site-nav__link site-nav__brand" href="#top">THE MOON RINGERS</a>')
+      expect(response.body).to match(
+        %r{<a class="site-nav__link site-nav__brand" href="#top">THE MOON RINGERS</a>\s*<div class="site-nav__links">\s*<a class="site-nav__link" href="#music">Music</a>\s*<a class="site-nav__link" href="#shows">Shows</a>\s*<a class="site-nav__link" href="#misc">Misc</a>\s*</div>}
+      )
       expect(response.body).to include('<a class="site-nav__link" href="#music">Music</a>')
       expect(response.body).to include('<a class="site-nav__link" href="#shows">Shows</a>')
       expect(response.body).to include('<a class="site-nav__link" href="#misc">Misc</a>')
