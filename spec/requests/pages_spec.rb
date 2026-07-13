@@ -12,6 +12,19 @@ RSpec.describe "Pages", type: :request do
       expect(response).to have_http_status(:ok)
     end
 
+    it "uses the logo asset as the favicon and Apple touch icon" do
+      get root_path
+
+      document = Nokogiri::HTML(response.body)
+      logo_asset_path = ActionController::Base.helpers.asset_path("logo.png")
+      favicon = document.at_css('head link[rel="icon"][type="image/png"]')
+      apple_touch_icon = document.at_css('head link[rel="apple-touch-icon"]')
+
+      expect(favicon["href"]).to eq(logo_asset_path)
+      expect(apple_touch_icon["href"]).to eq(logo_asset_path)
+      expect(document.css('head link[rel="icon"]').length).to eq(1)
+    end
+
     it "renders navigation links to each home page section" do
       get root_path
 
