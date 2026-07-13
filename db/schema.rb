@@ -10,20 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_12_130000) do
-  create_table "links", force: :cascade do |t|
-    t.boolean "artist", default: false, null: false
+ActiveRecord::Schema[8.1].define(version: 2026_07_13_120000) do
+  create_table "artists", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "name"
+    t.string "name", null: false
     t.datetime "updated_at", null: false
-    t.string "url"
+    t.string "url", null: false
   end
 
-  create_table "links_shows", id: false, force: :cascade do |t|
-    t.integer "link_id", null: false
+  create_table "artists_shows", id: false, force: :cascade do |t|
+    t.integer "artist_id", null: false
     t.integer "show_id", null: false
-    t.index ["link_id", "show_id"], name: "index_links_shows_on_link_id_and_show_id"
-    t.index ["show_id", "link_id"], name: "index_links_shows_on_show_id_and_link_id"
+    t.index ["artist_id", "show_id"], name: "index_artists_shows_on_artist_id_and_show_id", unique: true
+    t.index ["show_id", "artist_id"], name: "index_artists_shows_on_show_id_and_artist_id", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|
