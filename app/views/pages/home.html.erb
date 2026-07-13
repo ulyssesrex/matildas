@@ -34,10 +34,9 @@
               <td><%= [show.venue&.city, show.venue&.state].compact_blank.join(", ") %></td>
               <td><%= show.price %></td>
               <td class="shows-table__artists">
-                <% artists = show.links.select(&:artist?) %>
-                <% if artists.any? %>
+                <% if show.artists.any? %>
                   w/
-                  <% artists.each_with_index do |artist, index| %><%= ", " unless index.zero? %><%= link_to artist.name, artist.url %><% end %>
+                  <% show.artists.each_with_index do |artist, index| %><%= ", " unless index.zero? %><%= link_to artist.name, artist.url %><% end %>
                 <% end %>
               </td>
               <td class="shows-table__notes"><%= show.cancelled? ? show.cancellation_notes : show.notes %></td>
@@ -56,7 +55,7 @@
       <%= render "pages/admin_show_form",
             form: @show_form,
             venues: @venues,
-            links: @links,
+            artists: @artists,
             form_url: admin_shows_path,
             form_method: :post,
             title: "Add a Show",

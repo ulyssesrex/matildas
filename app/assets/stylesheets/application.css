@@ -162,7 +162,7 @@ a {
 
 .form-field > label,
 .form-label,
-.new-link-row label span {
+.new-artist-row label span {
   display: block;
   font-weight: 700;
   margin-bottom: 0.35rem;
@@ -220,7 +220,7 @@ input[type="password"] {
   top: -0.65rem;
 }
 
-.new-link-row {
+.new-artist-row {
   align-items: end;
   display: grid;
   gap: 0.75rem;
@@ -287,11 +287,11 @@ input[type="submit"] {
 
 @media (max-width: 48rem) {
   .admin-show-form__panels,
-  .new-link-row {
+  .new-artist-row {
     grid-template-columns: 1fr;
   }
 
-  .new-link-row {
+  .new-artist-row {
     align-items: stretch;
   }
 }

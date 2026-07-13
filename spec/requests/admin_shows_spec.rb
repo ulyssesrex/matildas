@@ -28,7 +28,7 @@ RSpec.describe "Admin shows", type: :request do
     it "creates a show with existing and new associated records for an admin" do
       admin = User.create!(email_address: "admin@example.com", password: "password", admin: true)
       venue = Venue.create!(name: "Union Hall", city: "Brooklyn", state: "NY", map_url: "https://maps.example/union")
-      existing_link = Link.create!(name: "Venue", url: "https://example.com/venue")
+      existing_artist = Artist.create!(name: "Venue", url: "https://example.com/venue")
       sign_in(admin)
 
       expect {
@@ -36,14 +36,14 @@ RSpec.describe "Admin shows", type: :request do
           admin_show_form: {
             date: "2026-07-10", time: "19:30", price: "$15", venue_id: venue.id,
             cancelled: "1", notes: "Doors at 7", cancellation_notes: "Venue closed",
-            link_ids: [ existing_link.id ],
-            new_links: {
+            artist_ids: [ existing_artist.id ],
+            new_artists: {
               "0" => { name: "Tickets", url: "https://example.com/tickets" },
               "1" => { name: "Info", url: "https://example.com/info" }
             }
           }
         }
-      }.to change(Show, :count).by(1).and change(Link, :count).by(2)
+      }.to change(Show, :count).by(1).and change(Artist, :count).by(2)
 
       expect(response).to redirect_to(root_path(anchor: "shows"))
       expect(Show.last).to have_attributes(
@@ -51,7 +51,7 @@ RSpec.describe "Admin shows", type: :request do
         cancelled: true, notes: "Doors at 7", cancellation_notes: "Venue closed"
       )
       expect(Show.last.time.strftime("%H:%M")).to eq("19:30")
-      expect(Show.last.links.pluck(:name)).to contain_exactly("Venue", "Tickets", "Info")
+      expect(Show.last.artists.pluck(:name)).to contain_exactly("Venue", "Tickets", "Info")
     end
 
     it "renders the home page with errors and entered values when invalid" do
@@ -104,8 +104,8 @@ RSpec.describe "Admin shows", type: :request do
     it "renders a prefilled edit form for an admin" do
       admin = User.create!(email_address: "admin@example.com", password: "password", admin: true)
       venue = Venue.create!(name: "Union Hall")
-      link = Link.create!(name: "Tickets", url: "https://example.com/tickets")
-      show.update!(venue: venue, links: [ link ])
+      artist = Artist.create!(name: "Tickets", url: "https://example.com/tickets")
+      show.update!(venue: venue, artists: [ artist ])
       sign_in(admin)
 
       get edit_admin_show_path(show)
@@ -116,8 +116,8 @@ RSpec.describe "Admin shows", type: :request do
       expect(response.body).to include('name="_method" value="patch"')
       venue_select = document.at_css('select[name="admin_show_form[venue_id]"]')
       expect(venue_select.at_css("option[value='#{venue.id}'][selected]")&.text).to eq("Union Hall")
-      artist_select = document.at_css('select[name="admin_show_form[link_ids][]"][multiple]')
-      expect(artist_select.at_css("option[value='#{link.id}'][selected]")&.text).to eq("Tickets")
+      artist_select = document.at_css('select[name="admin_show_form[artist_ids][]"][multiple]')
+      expect(artist_select.at_css("option[value='#{artist.id}'][selected]")&.text).to eq("Tickets")
     end
   end
 
@@ -153,12 +153,12 @@ RSpec.describe "Admin shows", type: :request do
               name: "Elsewhere", city: "Brooklyn", state: "NY",
               map_url: "https://maps.example/elsewhere"
             },
-            new_links: {
+            new_artists: {
               "0" => { name: "Tickets", url: "https://example.com/tickets" }
             }
           }
         }
-      }.to change(Venue, :count).by(1).and change(Link, :count).by(1)
+      }.to change(Venue, :count).by(1).and change(Artist, :count).by(1)
 
       expect(response).to redirect_to(root_path)
       expect(show.reload).to have_attributes(
@@ -166,14 +166,14 @@ RSpec.describe "Admin shows", type: :request do
         cancelled: true, notes: "Doors at 7", cancellation_notes: "Venue closed"
       )
       expect(show.time.strftime("%H:%M")).to eq("20:15")
-      expect(show.links.pluck(:name)).to contain_exactly("Tickets")
+      expect(show.artists.pluck(:name)).to contain_exactly("Tickets")
     end
 
     it "renders the edit page with submitted values when invalid" do
       admin = User.create!(email_address: "admin@example.com", password: "password", admin: true)
       venue = Venue.create!(name: "Union Hall")
-      link = Link.create!(name: "Tickets", url: "https://example.com/tickets")
-      show.update!(venue: venue, links: [ link ])
+      artist = Artist.create!(name: "Tickets", url: "https://example.com/tickets")
+      show.update!(venue: venue, artists: [ artist ])
       sign_in(admin)
 
       patch admin_show_path(show), params: {
@@ -183,7 +183,7 @@ RSpec.describe "Admin shows", type: :request do
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("Price can&#39;t be blank", "2026-08-12")
       expect(show.reload).to have_attributes(price: "$15", venue: venue)
-      expect(show.links).to contain_exactly(link)
+      expect(show.artists).to contain_exactly(artist)
     end
 
     it "updates a show to have a TBD time" do

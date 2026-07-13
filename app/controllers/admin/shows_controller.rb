@@ -2,7 +2,7 @@ class Admin::ShowsController < ApplicationController
   before_action :require_admin
 
   def edit
-    @show = Show.includes(:venue, :links).find(params[:id])
+    @show = Show.includes(:venue, :artists).find(params[:id])
     @show_form = Admin::ShowForm.new(show: @show)
     prepare_choices
   end
@@ -19,7 +19,7 @@ class Admin::ShowsController < ApplicationController
   end
 
   def update
-    @show = Show.includes(:venue, :links).find(params[:id])
+    @show = Show.includes(:venue, :artists).find(params[:id])
     @show_form = Admin::ShowForm.new(show_form_params.to_h.merge(show: @show))
 
     if @show_form.save
@@ -35,19 +35,19 @@ class Admin::ShowsController < ApplicationController
     def show_form_params
       params.require(:admin_show_form).permit(
         :date, :time, :price, :venue_id, :cancelled, :notes, :cancellation_notes,
-        link_ids: [],
+        artist_ids: [],
         new_venue: [ :name, :city, :state, :map_url ],
-        new_links: [ :name, :url ]
+        new_artists: [ :name, :url ]
       )
     end
 
     def prepare_home
-      @shows = Show.unexpired.includes(:venue, :links).chronological
+      @shows = Show.unexpired.includes(:venue, :artists).chronological
       prepare_choices
     end
 
     def prepare_choices
       @venues = Venue.order(:name, :city)
-      @links = Link.order(:name)
+      @artists = Artist.order(:name)
     end
 end

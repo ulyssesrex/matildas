@@ -32,16 +32,15 @@ RSpec.describe "pages/home.html.erb", type: :view do
     expect(rendered).to include("$15")
   end
 
-  it "links the venue and renders only artists as a prefixed comma-separated list" do
+  it "renders a linked venue and artists as a prefixed comma-separated list" do
     venue = Venue.new(
       name: "Union Hall", city: "Brooklyn", state: "NY",
       map_url: "https://maps.example/union"
     )
     show = Show.new(date: Date.new(2026, 7, 10), time: "19:30", price: "$15", venue: venue)
-    show.links = [
-      Link.new(name: "Artist One", url: "https://example.com/one", artist: true),
-      Link.new(name: "Tickets", url: "https://example.com/tickets", artist: false),
-      Link.new(name: "Artist Two", url: "https://example.com/two", artist: true)
+    show.artists = [
+      Artist.new(name: "Artist One", url: "https://example.com/one"),
+      Artist.new(name: "Artist Two", url: "https://example.com/two")
     ]
 
     assign(:shows, [ show ])
@@ -55,7 +54,6 @@ RSpec.describe "pages/home.html.erb", type: :view do
       [ "Artist One", "https://example.com/one" ],
       [ "Artist Two", "https://example.com/two" ]
     ])
-    expect(row).not_to have_link("Tickets")
   end
 
   it "keeps an unlinked venue name and an empty final cell when no URLs exist" do
@@ -76,7 +74,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
     assign(:shows, [])
     assign(:show_form, Admin::ShowForm.new)
     assign(:venues, [ Venue.new(id: 1, name: "Union Hall", city: "Brooklyn", state: "NY") ])
-    assign(:links, [ Link.new(id: 1, name: "Tickets") ])
+    assign(:artists, [ Artist.new(id: 1, name: "Tickets", url: "https://example.com/tickets") ])
 
     render template: "pages/home"
 
@@ -87,15 +85,14 @@ RSpec.describe "pages/home.html.erb", type: :view do
     expect(rendered).to include("Show details and Artists")
     expect(rendered).to include("With artists", "Or Create An Artist", "Add another Artist")
     expect(rendered).not_to include("Existing Artists", "New Artists")
-    expect(rendered).not_to include("Existing Links", "New Links", "Add another Link")
-    expect(rendered).to include('data-controller="link-rows"')
-    expect(rendered).to include('data-action="link-rows#add"')
-    expect(rendered).to include('data-action="link-rows#remove"')
+    expect(rendered).to include('data-controller="artist-rows"')
+    expect(rendered).to include('data-action="artist-rows#add"')
+    expect(rendered).to include('data-action="artist-rows#remove"')
     expect(rendered).to include("Create Show")
 
     document = Nokogiri::HTML.fragment(rendered)
     artist_field = document.at_css('[data-controller="artist-select"]')
-    artist_select = artist_field.at_css('select[name="admin_show_form[link_ids][]"]')
+    artist_select = artist_field.at_css('select[name="admin_show_form[artist_ids][]"]')
 
     search_input = artist_field.at_css('input[type="search"][data-artist-select-target="search"]')
     expect(search_input).to be_present
@@ -105,7 +102,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
     expect(artist_select).to have_attribute("multiple")
     expect(artist_select["data-artist-select-target"]).to eq("select")
     expect(artist_select.css("option").map(&:text)).to eq([ "Tickets" ])
-    expect(artist_field.css('input[type="checkbox"][name="admin_show_form[link_ids][]"]')).to be_empty
+    expect(artist_field.css('input[type="checkbox"][name="admin_show_form[artist_ids][]"]')).to be_empty
 
     venue_field = document.at_css('[data-controller="artist-select"]:has(select[name="admin_show_form[venue_id]"])')
     venue_select = venue_field.at_css('select[name="admin_show_form[venue_id]"]')
@@ -134,7 +131,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
       cancelled: true, notes: "Doors at 7", cancellation_notes: "Venue closed"
     ))
     assign(:venues, [])
-    assign(:links, [])
+    assign(:artists, [])
 
     render template: "pages/home"
 
@@ -161,7 +158,7 @@ RSpec.describe "pages/home.html.erb", type: :view do
     assign(:shows, [ show ])
     assign(:show_form, Admin::ShowForm.new)
     assign(:venues, [])
-    assign(:links, [])
+    assign(:artists, [])
 
     render template: "pages/home"
 

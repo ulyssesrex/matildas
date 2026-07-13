@@ -1,6 +1,6 @@
 <% new_venue = form.new_venue.respond_to?(:to_unsafe_h) ? form.new_venue.to_unsafe_h : form.new_venue.to_h %>
 <% new_venue = new_venue.stringify_keys %>
-<% selected_link_ids = Array(form.link_ids).map(&:to_s) %>
+<% selected_artist_ids = Array(form.artist_ids).map(&:to_s) %>
 
 <div class="admin-show-form" aria-labelledby="admin-show-form-title">
   <h3 id="admin-show-form-title"><%= title %></h3>
@@ -67,8 +67,8 @@
         </div>
 
         <div class="form-field" data-controller="artist-select">
-          <% if links.any? %>
-            <%= label_tag :admin_show_form_link_ids, "With artists", class: "form-label" %>
+          <% if artists.any? %>
+            <%= label_tag :admin_show_form_artist_ids, "With artists", class: "form-label" %>
             <%= search_field_tag :artist_search, nil,
                   autocomplete: "off",
                   aria: { label: "Search artists" },
@@ -76,50 +76,50 @@
                     action: "input->artist-select#filter",
                     artist_select_target: "search"
                   } %>
-            <%= select_tag "admin_show_form[link_ids][]",
-                  options_from_collection_for_select(links, :id, :name, selected_link_ids),
-                  id: "admin_show_form_link_ids",
+            <%= select_tag "admin_show_form[artist_ids][]",
+                  options_from_collection_for_select(artists, :id, :name, selected_artist_ids),
+                  id: "admin_show_form_artist_ids",
                   multiple: true,
-                  size: [ [ links.size, 4 ].max, 8 ].min,
+                  size: [ [ artists.size, 4 ].max, 8 ].min,
                   data: { artist_select_target: "select" } %>
           <% else %>
             <span class="form-label">With artists</span>
             <p class="form-hint">No existing Artists.</p>
           <% end %>
-          <% form.errors.full_messages_for(:link_ids).each do |message| %><p class="field-error"><%= message %></p><% end %>
+          <% form.errors.full_messages_for(:artist_ids).each do |message| %><p class="field-error"><%= message %></p><% end %>
         </div>
 
-        <div class="form-field" data-controller="link-rows">
+        <div class="form-field" data-controller="artist-rows">
           <p class="form-divider"><span>Or Create An Artist</span></p>
-          <div class="new-link-rows" data-link-rows-target="rows">
-            <% form.submitted_new_links.each_with_index do |link, index| %>
-              <div class="new-link-row" data-link-row>
+          <div class="new-artist-rows" data-artist-rows-target="rows">
+            <% form.submitted_new_artists.each_with_index do |artist, index| %>
+              <div class="new-artist-row" data-artist-row>
                 <label>
                   <span>Name</span>
-                  <%= text_field_tag "admin_show_form[new_links][#{index}][name]", link["name"] %>
+                  <%= text_field_tag "admin_show_form[new_artists][#{index}][name]", artist["name"] %>
                 </label>
                 <label>
                   <span>URL</span>
-                  <%= url_field_tag "admin_show_form[new_links][#{index}][url]", link["url"] %>
+                  <%= url_field_tag "admin_show_form[new_artists][#{index}][url]", artist["url"] %>
                 </label>
-                <button type="button" class="form-button form-button--secondary" data-action="link-rows#remove">Remove</button>
+                <button type="button" class="form-button form-button--secondary" data-action="artist-rows#remove">Remove</button>
               </div>
             <% end %>
           </div>
-          <% form.errors.full_messages_for(:new_links).each do |message| %><p class="field-error"><%= message %></p><% end %>
-          <button type="button" class="form-button form-button--secondary" data-action="link-rows#add">Add another Artist</button>
+          <% form.errors.full_messages_for(:new_artists).each do |message| %><p class="field-error"><%= message %></p><% end %>
+          <button type="button" class="form-button form-button--secondary" data-action="artist-rows#add">Add another Artist</button>
 
-          <template data-link-rows-target="template">
-            <div class="new-link-row" data-link-row>
+          <template data-artist-rows-target="template">
+            <div class="new-artist-row" data-artist-row>
               <label>
                 <span>Name</span>
-                <input type="text" name="admin_show_form[new_links][NEW_RECORD][name]">
+                <input type="text" name="admin_show_form[new_artists][NEW_RECORD][name]">
               </label>
               <label>
                 <span>URL</span>
-                <input type="url" name="admin_show_form[new_links][NEW_RECORD][url]">
+                <input type="url" name="admin_show_form[new_artists][NEW_RECORD][url]">
               </label>
-              <button type="button" class="form-button form-button--secondary" data-action="link-rows#remove">Remove</button>
+              <button type="button" class="form-button form-button--secondary" data-action="artist-rows#remove">Remove</button>
             </div>
           </template>
         </div>
