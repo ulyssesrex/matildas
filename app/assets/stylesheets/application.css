@@ -10,6 +10,7 @@
  */
 
 :root {
+  --body-heading-font-size: 1.5rem;
   --color-black: #000;
   --color-red: #f33;
   --color-white: #fff;
@@ -57,7 +58,7 @@ a {
 
 .site-nav__link {
   color: var(--color-white);
-  font-size: 0.875rem;
+  font-size: var(--body-heading-font-size);
   font-weight: 700;
   letter-spacing: 0;
   line-height: 1;
@@ -73,6 +74,10 @@ a {
 
 .site-nav__brand {
   margin-right: auto;
+}
+
+.home-section h2 {
+  font-size: var(--body-heading-font-size);
 }
 
 .home-page {
