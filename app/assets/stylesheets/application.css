@@ -113,6 +113,18 @@ textarea {
   max-width: 100%;
 }
 
+.bandcamp-embed {
+  display: block;
+  width: 100%;
+  height: 140px;
+  border: 0;
+  background: transparent;
+}
+
+.bandcamp-embed + .bandcamp-embed {
+  margin-top: 24px;
+}
+
 .home-section,
 .home-page {
   scroll-margin-top: var(--site-nav-height);
@@ -324,6 +336,10 @@ input[type="submit"] {
     border-left: 0;
     border-top: 1px solid var(--color-white);
     justify-content: flex-start;
+  }
+
+  .bandcamp-embed {
+    height: 120px;
   }
 }
 

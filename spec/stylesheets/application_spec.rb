@@ -15,6 +15,21 @@ RSpec.describe "Application stylesheet" do
     )
   end
 
+  it "stacks full-width Bandcamp players with source spacing" do
+    expect(stylesheet).to match(
+      /\.bandcamp-embed\s*\{[^}]*display:\s*block;[^}]*width:\s*100%;[^}]*height:\s*140px;[^}]*border:\s*0;[^}]*background:\s*transparent;/m
+    )
+    expect(stylesheet).to match(
+      /\.bandcamp-embed \+ \.bandcamp-embed\s*\{[^}]*margin-top:\s*24px;/m
+    )
+  end
+
+  it "shortens Bandcamp players on narrow screens" do
+    expect(stylesheet).to match(
+      /@media \(max-width: 38rem\)\s*\{.*?\.bandcamp-embed\s*\{[^}]*height:\s*120px;/m
+    )
+  end
+
   it "preserves editable text casing while keeping selections and actions uppercase" do
     expect(stylesheet).to match(
       /input,\s*textarea\s*\{[^}]*text-transform:\s*none;/m
