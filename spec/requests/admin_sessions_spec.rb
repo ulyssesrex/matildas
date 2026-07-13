@@ -10,20 +10,33 @@ RSpec.describe "Admin sessions", type: :request do
   end
 
   describe "POST /admin/session" do
-    it "redirects successful admin logins to the public home page" do
+    let!(:admin) do
       User.create!(
-        email_address: "admin@example.com",
-        password: "password",
-        password_confirmation: "password",
+        email_address: "Admin.User@Example.COM",
+        password: "MiXeD-Pass9",
+        password_confirmation: "MiXeD-Pass9",
         admin: true
       )
+    end
+
+    it "normalizes email casing and accepts the exact mixed-case password" do
+      expect(admin.reload.email_address).to eq("admin.user@example.com")
 
       post admin_session_path, params: {
-        email_address: "admin@example.com",
-        password: "password"
+        email_address: "ADMIN.USER@example.com",
+        password: "MiXeD-Pass9"
       }
 
       expect(response).to redirect_to(root_path)
+    end
+
+    it "keeps passwords case-sensitive" do
+      post admin_session_path, params: {
+        email_address: "admin.user@example.com",
+        password: "mixed-pass9"
+      }
+
+      expect(response).to redirect_to(new_admin_session_path)
     end
   end
 end
