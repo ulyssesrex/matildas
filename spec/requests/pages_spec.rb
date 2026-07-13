@@ -25,6 +25,19 @@ RSpec.describe "Pages", type: :request do
       expect(document.css('head link[rel="icon"]').length).to eq(1)
     end
 
+    it "renders the band photo immediately above the Music section" do
+      get root_path
+
+      document = Nokogiri::HTML(response.body)
+      image = document.at_css("main#top > img.home-page__band-photo")
+      music_section = document.at_css("main#top > section#music")
+
+      expect(image).to be_present
+      expect(image["src"]).to eq(ActionController::Base.helpers.asset_path("band_pic.jpg"))
+      expect(image["alt"]).to eq("The Moon Ringers band")
+      expect(music_section.previous_element).to eq(image)
+    end
+
     it "renders navigation links to each home page section" do
       get root_path
 

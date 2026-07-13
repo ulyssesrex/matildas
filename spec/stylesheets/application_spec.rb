@@ -9,6 +9,12 @@ RSpec.describe "Application stylesheet" do
     expect(stylesheet).to match(/\.site-nav__link\s*\{[^}]*font-size:\s*var\(--body-heading-font-size\);/m)
   end
 
+  it "keeps the band photo proportional and within the page width" do
+    expect(stylesheet).to match(
+      /\.home-page__band-photo\s*\{[^}]*display:\s*block;[^}]*height:\s*auto;[^}]*max-width:\s*100%;/m
+    )
+  end
+
   it "preserves editable text casing while keeping selections and actions uppercase" do
     expect(stylesheet).to match(
       /input,\s*textarea\s*\{[^}]*text-transform:\s*none;/m

@@ -107,6 +107,12 @@ textarea {
   padding: 2rem;
 }
 
+.home-page__band-photo {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
 .home-section,
 .home-page {
   scroll-margin-top: var(--site-nav-height);
