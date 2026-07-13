@@ -96,45 +96,43 @@ RSpec.describe Admin::ShowForm do
     expect(form.errors[:venue_id]).to include("is invalid")
   end
 
-  it "combines unique existing links with multiple new links" do
-    existing = Link.create!(name: "Venue", url: "https://example.com/venue")
+  it "combines unique existing artists with multiple new artists" do
+    existing = Artist.create!(name: "Venue", url: "https://example.com/venue")
     form = described_class.new(attributes.merge(
-      link_ids: [ "", existing.id.to_s, existing.id.to_s ],
-      new_links: {
+      artist_ids: [ "", existing.id.to_s, existing.id.to_s ],
+      new_artists: {
         "0" => { name: "Tickets", url: "https://example.com/tickets" },
         "1" => { name: "Info", url: "https://example.com/info" },
         "2" => { name: "", url: "" }
       }
     ))
 
-    expect { form.save }.to change(Link, :count).by(2)
-    expect(form.show.links.pluck(:name)).to contain_exactly("Venue", "Tickets", "Info")
-    expect(form.show.links.where(name: [ "Tickets", "Info" ])).to all(be_artist)
-    expect(existing.reload).not_to be_artist
+    expect { form.save }.to change(Artist, :count).by(2)
+    expect(form.show.artists.pluck(:name)).to contain_exactly("Venue", "Tickets", "Info")
   end
 
-  it "requires both fields in a started new link row" do
-    form = described_class.new(attributes.merge(new_links: { "0" => { name: "Tickets", url: "" } }))
+  it "requires both fields in a started new artist row" do
+    form = described_class.new(attributes.merge(new_artists: { "0" => { name: "Tickets", url: "" } }))
 
     expect(form).not_to be_valid
-    expect(form.errors[:new_links]).to include("row 1 URL can't be blank")
+    expect(form.errors[:new_artists]).to include("row 1 URL can't be blank")
   end
 
-  it "rejects unknown existing link ids" do
-    form = described_class.new(attributes.merge(link_ids: [ "999999" ]))
+  it "rejects unknown existing artist ids" do
+    form = described_class.new(attributes.merge(artist_ids: [ "999999" ]))
 
     expect(form).not_to be_valid
-    expect(form.errors[:link_ids]).to include("contain an invalid Link")
+    expect(form.errors[:artist_ids]).to include("contain an invalid Artist")
   end
 
   it "rolls back every record when persistence fails" do
-    allow(Link).to receive(:create!).and_raise(ActiveRecord::RecordInvalid.new(Link.new))
+    allow(Artist).to receive(:create!).and_raise(ActiveRecord::RecordInvalid.new(Artist.new))
     form = described_class.new(attributes.merge(
       new_venue: { name: "The Sinclair", city: "Cambridge", state: "MA", map_url: "https://maps.example/sinclair" },
-      new_links: { "0" => { name: "Tickets", url: "https://example.com/tickets" } }
+      new_artists: { "0" => { name: "Tickets", url: "https://example.com/tickets" } }
     ))
 
-    expect { form.save }.not_to change { [ Show.count, Venue.count, Link.count ] }
+    expect { form.save }.not_to change { [ Show.count, Venue.count, Artist.count ] }
     expect(form.errors[:base]).to be_present
   end
 
@@ -151,11 +149,11 @@ RSpec.describe Admin::ShowForm do
         map_url: "https://maps.example/sinclair"
       )
     end
-    let!(:existing_link) { Link.create!(name: "Venue", url: "https://example.com/venue") }
-    let!(:replacement_link) { Link.create!(name: "Details", url: "https://example.com/details") }
+    let!(:existing_artist) { Artist.create!(name: "Venue", url: "https://example.com/venue") }
+    let!(:replacement_artist) { Artist.create!(name: "Details", url: "https://example.com/details") }
     let!(:show) do
       Show.create!(date: Date.new(2026, 7, 10), time: "19:30", price: "$15", venue: venue).tap do |record|
-        record.links = [ existing_link ]
+        record.artists = [ existing_artist ]
       end
     end
 
@@ -164,7 +162,7 @@ RSpec.describe Admin::ShowForm do
 
       expect(form).to have_attributes(
         date: "2026-07-10", time: "19:30", price: "$15",
-        venue_id: venue.id.to_s, link_ids: [ existing_link.id.to_s ]
+        venue_id: venue.id.to_s, artist_ids: [ existing_artist.id.to_s ]
       )
     end
 
@@ -173,7 +171,7 @@ RSpec.describe Admin::ShowForm do
         show: show,
         date: "2026-08-12", time: "20:15", price: "$20",
         venue_id: replacement_venue.id.to_s,
-        link_ids: [ replacement_link.id.to_s ]
+        artist_ids: [ replacement_artist.id.to_s ]
       )
 
       expect(form.save).to be(true)
@@ -181,10 +179,10 @@ RSpec.describe Admin::ShowForm do
         date: Date.new(2026, 8, 12), price: "$20", venue: replacement_venue
       )
       expect(show.time.strftime("%H:%M")).to eq("20:15")
-      expect(show.links).to contain_exactly(replacement_link)
+      expect(show.artists).to contain_exactly(replacement_artist)
     end
 
-    it "creates a new venue and link while editing" do
+    it "creates a new venue and artist while editing" do
       form = described_class.new(
         show: show,
         date: "2026-07-10", time: "19:30", price: "$18",
@@ -192,24 +190,23 @@ RSpec.describe Admin::ShowForm do
           name: "Elsewhere", city: "Brooklyn", state: "NY",
           map_url: "https://maps.example/elsewhere"
         },
-        new_links: {
+        new_artists: {
           "0" => { name: "Tickets", url: "https://example.com/tickets" }
         }
       )
 
-      expect { form.save }.to change(Venue, :count).by(1).and change(Link, :count).by(1)
+      expect { form.save }.to change(Venue, :count).by(1).and change(Artist, :count).by(1)
       expect(show.reload.venue.name).to eq("Elsewhere")
-      expect(show.links.pluck(:name)).to contain_exactly("Tickets")
-      expect(show.links.first).to be_artist
+      expect(show.artists.pluck(:name)).to contain_exactly("Tickets")
     end
 
     it "rolls back show updates when an associated record fails" do
-      allow(Link).to receive(:create!).and_raise(ActiveRecord::RecordInvalid.new(Link.new))
+      allow(Artist).to receive(:create!).and_raise(ActiveRecord::RecordInvalid.new(Artist.new))
       form = described_class.new(
         show: show,
         date: "2026-08-12", time: "20:15", price: "$20",
         cancelled: "1", notes: "Updated notes", cancellation_notes: "Venue closed",
-        new_links: {
+        new_artists: {
           "0" => { name: "Tickets", url: "https://example.com/tickets" }
         }
       )
@@ -220,7 +217,7 @@ RSpec.describe Admin::ShowForm do
         cancelled: false, notes: nil, cancellation_notes: nil
       )
       expect(show.time.strftime("%H:%M")).to eq("19:30")
-      expect(show.links).to contain_exactly(existing_link)
+      expect(show.artists).to contain_exactly(existing_artist)
     end
 
     it "prefills and preserves both notes through cancellation changes" do

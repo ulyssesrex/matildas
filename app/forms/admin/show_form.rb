@@ -14,15 +14,15 @@ module Admin
     attribute :notes, :string
     attribute :cancellation_notes, :string
 
-    attr_accessor :link_ids, :new_venue, :new_links
+    attr_accessor :artist_ids, :new_venue, :new_artists
     attr_reader :show
 
     validates :date, :price, presence: true
     validate :date_is_valid
     validate :time_is_valid
     validate :venue_choice_is_valid
-    validate :existing_link_ids_are_valid
-    validate :new_link_rows_are_complete
+    validate :existing_artist_ids_are_valid
+    validate :new_artist_rows_are_complete
 
     def initialize(attributes = {})
       attributes = attributes.to_h
@@ -30,9 +30,9 @@ module Admin
       attributes = attributes_from_show if attributes.empty?
 
       super(attributes)
-      self.link_ids ||= []
+      self.artist_ids ||= []
       self.new_venue ||= {}
-      self.new_links ||= {}
+      self.new_artists ||= {}
     end
 
     def save
@@ -50,8 +50,8 @@ module Admin
           notes: notes,
           cancellation_notes: cancellation_notes
         )
-        @show.links = existing_links
-        normalized_new_links.each { |link_attributes| @show.links << Link.create!(link_attributes) }
+        @show.artists = existing_artists
+        normalized_new_artists.each { |artist_attributes| @show.artists << Artist.create!(artist_attributes) }
       end
 
       true
@@ -61,8 +61,8 @@ module Admin
       false
     end
 
-    def submitted_new_links
-      rows = normalized_hash(new_links).values.map { |row| normalized_hash(row).slice("name", "url") }
+    def submitted_new_artists
+      rows = normalized_hash(new_artists).values.map { |row| normalized_hash(row).slice("name", "url") }
       rows.presence || [ { "name" => "", "url" => "" } ]
     end
 
@@ -76,7 +76,7 @@ module Admin
           time: show.time&.strftime("%H:%M"),
           price: show.price,
           venue_id: show.venue_id&.to_s,
-          link_ids: show.link_ids.map(&:to_s),
+          artist_ids: show.artist_ids.map(&:to_s),
           cancelled: show.cancelled,
           notes: show.notes,
           cancellation_notes: show.cancellation_notes
@@ -124,18 +124,18 @@ module Admin
         end
       end
 
-      def existing_link_ids_are_valid
-        return if normalized_link_ids.empty?
+      def existing_artist_ids_are_valid
+        return if normalized_artist_ids.empty?
 
-        errors.add(:link_ids, "contain an invalid Link") unless existing_links.length == normalized_link_ids.length
+        errors.add(:artist_ids, "contain an invalid Artist") unless existing_artists.length == normalized_artist_ids.length
       end
 
-      def new_link_rows_are_complete
-        submitted_new_links.each_with_index do |row, index|
+      def new_artist_rows_are_complete
+        submitted_new_artists.each_with_index do |row, index|
           next if row.values.all?(&:blank?)
 
-          errors.add(:new_links, "row #{index + 1} Name can't be blank") if row["name"].blank?
-          errors.add(:new_links, "row #{index + 1} URL can't be blank") if row["url"].blank?
+          errors.add(:new_artists, "row #{index + 1} Name can't be blank") if row["name"].blank?
+          errors.add(:new_artists, "row #{index + 1} URL can't be blank") if row["url"].blank?
         end
       end
 
@@ -145,12 +145,12 @@ module Admin
         @existing_venue ||= Venue.find_by(id: venue_id)
       end
 
-      def existing_links
-        @existing_links ||= Link.where(id: normalized_link_ids).to_a
+      def existing_artists
+        @existing_artists ||= Artist.where(id: normalized_artist_ids).to_a
       end
 
-      def normalized_link_ids
-        @normalized_link_ids ||= Array(link_ids).reject(&:blank?).map(&:to_s).uniq
+      def normalized_artist_ids
+        @normalized_artist_ids ||= Array(artist_ids).reject(&:blank?).map(&:to_s).uniq
       end
 
       def normalized_new_venue
@@ -161,9 +161,9 @@ module Admin
         normalized_new_venue.values.any?(&:present?)
       end
 
-      def normalized_new_links
-        submitted_new_links.filter_map do |row|
-          row.symbolize_keys.merge(artist: true) if row.values.any?(&:present?)
+      def normalized_new_artists
+        submitted_new_artists.filter_map do |row|
+          row.symbolize_keys if row.values.any?(&:present?)
         end
       end
 
