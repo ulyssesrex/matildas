@@ -36,5 +36,8 @@
 # Local visual brainstorming sessions.
 /.superpowers/
 
+# Isolated local development worktrees.
+/.worktrees/
+
 # Ignore key files for decrypting credentials and more.
 /config/*.key
