@@ -1,11 +1,17 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/matildas/public_html
-    - bundle install --deployment --without development test
-    - bundle exec bin/rails db:prepare RAILS_ENV=production
-    - bundle exec bin/rails assets:precompile RAILS_ENV=production
-    - "/bin/rsync -a --exclude='/.cpanel.yml' --exclude='/.git/' --exclude='/.local/' --exclude='/.bundle/' --exclude='/.env*' --exclude='/config/master.key' --exclude='/log/' --exclude='/tmp/' --exclude='/storage/' --exclude='/public/assets/' --exclude='/vendor/bundle/' ./ /home/matildas/public_html/"
-    - /bin/mkdir -p /home/matildas/public_html/tmp
-    - /usr/bin/touch /home/matildas/public_html/tmp/restart.txt
+    - export DEPLOYPATH=/home/matildas/rails_app
+    - export WEBROOT=/home/matildas/public_html
+    # Copy code to the secure directory
+    - "/bin/rsync -a --exclude='/.cpanel.yml' --exclude='/.git/' --exclude='/.local/' --exclude='/.bundle/' --exclude='/.env*' --exclude='/config/master.key' --exclude='/log/' --exclude='/tmp/' --exclude='/storage/' ./ $DEPLOYPATH/"
+    # Run bundles and tasks safely outside of the public eye
+    - cd $DEPLOYPATH && bundle install --deployment --without development test
+    - cd $DEPLOYPATH && bundle exec bin/rails db:prepare RAILS_ENV=production
+    - cd $DEPLOYPATH && bundle exec bin/rails assets:precompile RAILS_ENV=production
+    # Sync ONLY the compiled static assets to the public_html folder
+    - /bin/rsync -a $DEPLOYPATH/public/ $WEBROOT/
+    # Restart the application
+    - /bin/mkdir -p $DEPLOYPATH/tmp
+    - /usr/bin/touch $DEPLOYPATH/tmp/restart.txt
 
