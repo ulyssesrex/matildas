@@ -1,11 +1,10 @@
 ---
 deployment:
   tasks:
-    - /usr/bin/rsync -a --exclude='/.git/' --exclude='/.local/' --exclude='/.bundle/' --exclude='/.env*' --exclude='/config/master.key' --exclude='/log/' --exclude='/tmp/' --exclude='/storage/' --exclude='/public/assets/' --exclude='/vendor/bundle/' ./ /home/matildas/public_html/
-    - cd /home/matildas/public_html && bundle config set --local path vendor/bundle
-    - cd /home/matildas/public_html && bundle config set --local without 'development test'
-    - cd /home/matildas/public_html && bundle install
-    - cd /home/matildas/public_html && RAILS_ENV=production bundle exec rails db:prepare
-    - cd /home/matildas/public_html && RAILS_ENV=production bundle exec rails assets:precompile
+    - export DEPLOYPATH=/home/matildas/public_html
+    - bundle install --deployment --without development test
+    - bundle exec bin/rails db:prepare RAILS_ENV=production
+    - bundle exec bin/rails assets:precompile RAILS_ENV=production
+    - /bin/rsync -a --exclude='/.cpanel.yml' --exclude='/.git/' --exclude='/.local/' --exclude='/.bundle/' --exclude='/.env*' --exclude='/config/master.key' --exclude='/log/' --exclude='/tmp/' --exclude='/storage/' --exclude='/public/assets/' --exclude='/vendor/bundle/' ./ /home/matildas/public_html/
     - /bin/mkdir -p /home/matildas/public_html/tmp
     - /usr/bin/touch /home/matildas/public_html/tmp/restart.txt
