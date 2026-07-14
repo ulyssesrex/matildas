@@ -3,15 +3,21 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/matildas/rails_app
     - export WEBROOT=/home/matildas/public_html
-    # Copy code to the secure directory
-    - "/bin/rsync -a --exclude='/.cpanel.yml' --exclude='/.git/' --exclude='/.local/' --exclude='/.bundle/' --exclude='/.env*' --exclude='/config/master.key' --exclude='/log/' --exclude='/tmp/' --exclude='/storage/' ./ $DEPLOYPATH/"
-    # Run bundles and tasks safely outside of the public eye
-    - cd $DEPLOYPATH && bundle install --deployment --without development test
-    - cd $DEPLOYPATH && bundle exec bin/rails db:prepare RAILS_ENV=production
-    - cd $DEPLOYPATH && bundle exec bin/rails assets:precompile RAILS_ENV=production
-    # Sync ONLY the compiled static assets to the public_html folder
-    - /bin/rsync -a $DEPLOYPATH/public/ $WEBROOT/
-    # Restart the application
+    - /bin/mkdir -p $DEPLOYPATH
+    
+    # 1. Copy app code to the secure directory
+    - /bin/tar --exclude='.git' --exclude='.cpanel.yml' --exclude='.bundle' --exclude='.env*' --exclude='config/master.key' --exclude='log' --exclude='tmp' --exclude='storage' -cf - . | (cd $DEPLOYPATH && /bin/tar -xf -)
+    
+    # 2. Run Rails tasks using the absolute path to the CloudLinux bundle binary
+    - cd $DEPLOYPATH && /opt/alt/ruby32/bin/bundle install --deployment --without development test
+    - cd $DEPLOYPATH && /opt/alt/ruby32/bin/bundle exec bin/rails db:prepare RAILS_ENV=production
+    - cd $DEPLOYPATH && /opt/alt/ruby32/bin/bundle exec bin/rails assets:precompile RAILS_ENV=production
+    
+    # 3. Copy ONLY the compiled static assets to the public_html folder
+    - /bin/mkdir -p $WEBROOT
+    - cd $DEPLOYPATH/public && /bin/tar -cf - . | (cd $WEBROOT && /bin/tar -xf -)
+    
+    # 4. Restart the application
     - /bin/mkdir -p $DEPLOYPATH/tmp
     - /usr/bin/touch $DEPLOYPATH/tmp/restart.txt
 
