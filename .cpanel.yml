@@ -8,3 +8,4 @@ deployment:
     - /bin/rsync -a --exclude='/.cpanel.yml' --exclude='/.git/' --exclude='/.local/' --exclude='/.bundle/' --exclude='/.env*' --exclude='/config/master.key' --exclude='/log/' --exclude='/tmp/' --exclude='/storage/' --exclude='/public/assets/' --exclude='/vendor/bundle/' ./ /home/matildas/public_html/
     - /bin/mkdir -p /home/matildas/public_html/tmp
     - /usr/bin/touch /home/matildas/public_html/tmp/restart.txt
+
